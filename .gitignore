@@ -1,0 +1,17 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Imported translations (generated from CSV)
+*.translation
+
+# Mono-specific (only if you ever use C# in Godot)
+.mono/
+data_*/
+mono_crash.*.json
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*~
