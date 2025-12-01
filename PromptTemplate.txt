@@ -1,0 +1,8 @@
+Use the OneDayGames specs in:
+- AGENTS.md
+- shared/shared_systems_spec.md
+
+Treat this as a Standard Task Invocation as defined in AGENTS.md.
+
+Task:
+<DESCRIBE YOUR TASK HERE>
