@@ -1,0 +1,194 @@
+[gd_scene load_steps=3 format=3 uid="uid://settingsmenu"]
+
+[ext_resource type="Theme" path="res://shared/ui/default_theme.tres" id=1]
+[ext_resource type="Script" path="res://defaultTemplate/settings_menu.gd" id=2]
+
+[node name="SettingsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource("1")
+script = ExtResource("2")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.0823529, 0.0941176, 0.113725, 1)
+
+[node name="Center" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -180.0
+offset_right = 220.0
+offset_bottom = 180.0
+alignment = 1
+custom_constants/separation = 12
+
+[node name="Title" type="Label" parent="Center"]
+layout_mode = 2
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="Tabs" type="TabContainer" parent="Center"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Game" type="Control" parent="Center/Tabs"]
+layout_mode = 3
+
+[node name="GameVBox" type="VBoxContainer" parent="Center/Tabs/Game"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+alignment = 1
+custom_constants/separation = 8
+
+[node name="GamePlaceholder" type="Label" parent="Center/Tabs/Game/GameVBox"]
+layout_mode = 2
+text = "Game-specific settings go here."
+
+[node name="Display" type="Control" parent="Center/Tabs"]
+layout_mode = 3
+
+[node name="DisplayVBox" type="VBoxContainer" parent="Center/Tabs/Display"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+alignment = 1
+custom_constants/separation = 8
+
+[node name="Fullscreen" type="CheckBox" parent="Center/Tabs/Display/DisplayVBox"]
+layout_mode = 2
+text = "Fullscreen"
+
+[node name="Borderless" type="CheckBox" parent="Center/Tabs/Display/DisplayVBox"]
+layout_mode = 2
+text = "Borderless"
+
+[node name="VSync" type="CheckBox" parent="Center/Tabs/Display/DisplayVBox"]
+layout_mode = 2
+text = "VSync"
+
+[node name="ResolutionHBox" type="HBoxContainer" parent="Center/Tabs/Display/DisplayVBox"]
+layout_mode = 2
+alignment = 1
+custom_constants/separation = 6
+
+[node name="ResolutionLabel" type="Label" parent="Center/Tabs/Display/DisplayVBox/ResolutionHBox"]
+layout_mode = 2
+text = "Resolution"
+
+[node name="Resolution" type="OptionButton" parent="Center/Tabs/Display/DisplayVBox/ResolutionHBox"]
+layout_mode = 2
+
+[node name="Keybinds" type="Control" parent="Center/Tabs"]
+layout_mode = 3
+
+[node name="KeybindsVBox" type="VBoxContainer" parent="Center/Tabs/Keybinds"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+alignment = 1
+custom_constants/separation = 6
+
+[node name="Audio" type="Control" parent="Center/Tabs"]
+layout_mode = 3
+
+[node name="AudioVBox" type="VBoxContainer" parent="Center/Tabs/Audio"]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+alignment = 1
+custom_constants/separation = 10
+
+[node name="MasterHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
+layout_mode = 2
+alignment = 1
+custom_constants/separation = 8
+
+[node name="MasterLabel" type="Label" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
+layout_mode = 2
+text = "Master Volume"
+
+[node name="MasterSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
+layout_mode = 2
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
+layout_mode = 2
+alignment = 1
+custom_constants/separation = 8
+
+[node name="MusicLabel" type="Label" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
+layout_mode = 2
+text = "Music Volume"
+
+[node name="MusicSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
+layout_mode = 2
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 0.8
+
+[node name="SfxHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
+layout_mode = 2
+alignment = 1
+custom_constants/separation = 8
+
+[node name="SfxLabel" type="Label" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
+layout_mode = 2
+text = "SFX Volume"
+
+[node name="SfxSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
+layout_mode = 2
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 0.8
+
+[node name="BackButton" type="Button" parent="Center"]
+layout_mode = 2
+text = "Back"

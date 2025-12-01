@@ -1,0 +1,29 @@
+; Engine configuration file.
+; Generated for shared systems autoload.
+
+config_version=5
+
+[application]
+config/name="OneDayGames Shared"
+run/main_scene="res://defaultTemplate/main.tscn"
+config/features=PackedStringArray("4.5", "Forward Plus")
+
+[autoload]
+SceneConfig="res://shared/autoload/SceneConfig.gd"
+EventBus="res://shared/autoload/EventBus.gd"
+ConfigManager="res://shared/autoload/ConfigManager.gd"
+InputManager="res://shared/autoload/InputManager.gd"
+AudioManager="res://shared/autoload/AudioManager.gd"
+SaveManager="res://shared/autoload/SaveManager.gd"
+LegalManager="res://shared/autoload/LegalManager.gd"
+SceneManager="res://shared/autoload/SceneManager.gd"
+
+[input]
+action_primary={"deadzone":0.5,"events":[{"type":"InputEventMouseButton","device":-1,"button_index":1,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"pressed":false,"double_click":false,"script":null}]}
+move_down={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":83,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
+move_left={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":65,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
+move_right={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":68,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
+move_up={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":87,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
+pause={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":4194305,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
+ui_accept={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":4194309,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
+ui_cancel={"deadzone":0.5,"events":[{"type":"InputEventKey","device":-1,"window_id":0,"echo":false,"pressed":false,"keycode":4194305,"physical_keycode":0,"key_label":0,"unicode":0,"script":null}]}
