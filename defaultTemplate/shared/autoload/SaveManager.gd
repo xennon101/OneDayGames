@@ -1,7 +1,6 @@
 extends Node
 
 const SAVE_PATH := "user://savegame.save"
-const SAVE_PATH_FALLBACK := "res://tmp/savegame.save"
 
 var game_supports_saves: bool = false
 var _memory_save: Dictionary = {}
@@ -9,8 +8,7 @@ var _memory_save: Dictionary = {}
 
 func has_save() -> bool:
 	var primary := ProjectSettings.globalize_path(SAVE_PATH)
-	var fallback := ProjectSettings.globalize_path(SAVE_PATH_FALLBACK)
-	return not _memory_save.is_empty() or FileAccess.file_exists(primary) or FileAccess.file_exists(fallback)
+	return not _memory_save.is_empty() or FileAccess.file_exists(primary)
 
 
 func save_game(data: Dictionary) -> void:
@@ -20,11 +18,6 @@ func save_game(data: Dictionary) -> void:
 	DirAccess.make_dir_recursive_absolute(dir_path)
 	var path := ProjectSettings.globalize_path(SAVE_PATH)
 	var file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
-		var fallback_dir := ProjectSettings.globalize_path("res://tmp")
-		DirAccess.make_dir_recursive_absolute(fallback_dir)
-		path = ProjectSettings.globalize_path(SAVE_PATH_FALLBACK)
-		file = FileAccess.open(path, FileAccess.WRITE)
 	if file == null:
 		_memory_save = data.duplicate(true)
 		return
@@ -37,8 +30,6 @@ func load_game() -> Dictionary:
 	if not game_supports_saves or not has_save():
 		return _memory_save.duplicate(true) if not _memory_save.is_empty() else {}
 	var path := ProjectSettings.globalize_path(SAVE_PATH)
-	if not FileAccess.file_exists(path):
-		path = ProjectSettings.globalize_path(SAVE_PATH_FALLBACK)
 	var file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return _memory_save.duplicate(true)

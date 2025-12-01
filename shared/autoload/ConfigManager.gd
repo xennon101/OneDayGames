@@ -53,10 +53,7 @@ func save_config() -> void:
 	cf.set_value("config", "data", _config)
 	var err := cf.save(ProjectSettings.globalize_path(CONFIG_PATH))
 	if err != OK:
-		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://tmp"))
-		err = cf.save(ProjectSettings.globalize_path(CONFIG_PATH_FALLBACK))
-	if err != OK:
-		# In environments without write permissions we continue without persistence.
+		push_warning("ConfigManager: failed to save config (user:// unavailable), settings not persisted.")
 		return
 
 
