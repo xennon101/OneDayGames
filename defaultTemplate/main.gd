@@ -19,6 +19,7 @@ func _ready() -> void:
 func _get_scene_manager() -> Object:
 	if Engine.has_singleton("SceneManager"):
 		return Engine.get_singleton("SceneManager")
-	if get_tree().has_node("/root/SceneManager"):
-		return get_tree().get_node("/root/SceneManager")
+	var root := get_tree().get_root()
+	if root.has_node("SceneManager"):
+		return root.get_node("SceneManager")
 	return null
