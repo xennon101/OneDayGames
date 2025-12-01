@@ -1,0 +1,23 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2548)
+PASS: Scripts load
+PASS: Scenes instantiate
+PASS: Main menu buttons exist
+PASS: Settings menu widgets exist
+Template smoke tests run: 4, failures: 0
+[SceneConfig] autoload setting: {  }
+[SceneConfig] project root: C:/Dropbox/work/OneDayGames/GodotProjects/defaultTemplate
+[SceneConfig] base path: res:// (local_boot: true, template_boot: false)
+[SceneConfig] registered ids: ["boot", "main_menu", "loading", "settings", "credits", "gameplay"]
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:56)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:44)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:29)
+[SceneManager] Engine singletons at ready: ["Performance", "Engine", "ProjectSettings", "OS", "Time", "TextServerManager", "PhysicsServer2DManager", "PhysicsServer3DManager", "NavigationMeshGenerator", "IP", "Geometry2D", "Geometry3D", "ResourceLoader", "ResourceSaver", "ClassDB", "Marshalls", "TranslationServer", "Input", "InputMap", "EngineDebugger", "GDExtensionManager", "ResourceUID", "WorkerThreadPool", "ThemeDB", "JavaClassWrapper", "JavaScriptBridge", "AudioServer", "CameraServer", "DisplayServer", "NativeMenu", "RenderingServer", "NavigationServer2D", "NavigationServer3D", "PhysicsServer2D", "PhysicsServer3D", "XRServer"]
+[SceneManager] autoload SceneConfig path: res://shared/autoload/SceneConfig.gd
+[SceneManager] scene_config set: true
+[SceneManager] ready. SceneConfig exists: true at C:/Dropbox/work/OneDayGames/GodotProjects/defaultTemplate/
