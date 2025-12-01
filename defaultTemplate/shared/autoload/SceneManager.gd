@@ -28,10 +28,10 @@ func _ensure_scene_config() -> void:
 		scene_config = get_tree().get_node("/root/SceneConfig")
 		print("[SceneManager] scene_config acquired after defer: %s" % (scene_config != null))
 	if scene_config == null:
-		var default_path := "res://shared/autoload/SceneConfig.gd"
-		var res := ResourceLoader.load(default_path)
+		var default_path: String = "res://shared/autoload/SceneConfig.gd"
+		var res: Script = ResourceLoader.load(default_path)
 		if res:
-			var inst := res.new()
+			var inst: Node = (res as Script).new()
 			inst.name = "SceneConfig"
 			get_tree().get_root().add_child(inst)
 			scene_config = inst

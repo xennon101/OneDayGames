@@ -38,18 +38,18 @@ func _ensure_autoloads() -> void:
 		"LegalManager": "res://shared/autoload/LegalManager.gd",
 		"SceneManager": "res://shared/autoload/SceneManager.gd"
 	}
-	for name in autoloads.keys():
-		if get_tree().has_node("/root/%s" % name):
+	for autoload_name in autoloads.keys():
+		if get_tree().get_root().has_node(autoload_name):
 			continue
-		var script_path: String = autoloads[name]
+		var script_path: String = autoloads[autoload_name]
 		var res := ResourceLoader.load(script_path)
 		if res == null:
-			print("[Main] Failed to load autoload %s from %s" % [name, script_path])
+			print("[Main] Failed to load autoload %s from %s" % [autoload_name, script_path])
 			continue
 		var inst = res.new()
-		inst.name = name
+		inst.name = autoload_name
 		get_tree().get_root().add_child(inst)
-		print("[Main] Injected autoload %s from %s" % [name, script_path])
+		print("[Main] Injected autoload %s from %s" % [autoload_name, script_path])
 
 
 func _root_child_names() -> Array:
