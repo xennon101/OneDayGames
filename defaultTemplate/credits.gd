@@ -9,9 +9,9 @@ func _ready() -> void:
 
 
 func _populate() -> void:
-	if not Engine.has_singleton("LegalManager"):
+	var lm = _get_autoload("LegalManager")
+	if lm == null:
 		return
-	var lm = Engine.get_singleton("LegalManager")
 	$Center/Company.text = lm.get_company_name()
 	$Center/Website.text = lm.get_website_url()
 	$Center/CreditsText.text = lm.get_credits_text()
@@ -19,5 +19,15 @@ func _populate() -> void:
 
 
 func _on_back_pressed() -> void:
-	if Engine.has_singleton("SceneManager"):
-		Engine.get_singleton("SceneManager").return_to_main_menu()
+	var sm = _get_autoload("SceneManager")
+	if sm:
+		sm.return_to_main_menu()
+
+
+func _get_autoload(name: String) -> Object:
+	var root := get_tree().get_root()
+	if root.has_node(name):
+		return root.get_node(name)
+	if Engine.has_singleton(name):
+		return Engine.get_singleton(name)
+	return null

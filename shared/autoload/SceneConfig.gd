@@ -1,24 +1,24 @@
 extends Node
 
 ## Provides ID-based scene path resolution across shared systems and games.
-var DEFAULT_PATHS := {
-	"boot": "res://defaultTemplate/boot.tscn",
-	"main_menu": "res://defaultTemplate/main_menu.tscn",
-	"loading": "res://defaultTemplate/loading_screen.tscn",
-	"settings": "res://defaultTemplate/settings_menu.tscn",
-	"credits": "res://defaultTemplate/credits.tscn",
-	"gameplay": "res://defaultTemplate/placeholder_game.tscn"
-}
-var _paths: Dictionary = DEFAULT_PATHS.duplicate(true)
+var DEFAULT_PATHS: Dictionary = {}
+var _paths: Dictionary = {}
 
 
 func _ready() -> void:
 	print("[SceneConfig] autoload setting: %s" % str(ProjectSettings.get_setting("autoload", {})))
 	var base_path := "res://defaultTemplate/"
-	var project_root := ProjectSettings.globalize_path("res://")
-	if project_root.ends_with("/defaultTemplate") or project_root.ends_with("\\defaultTemplate"):
+	var project_root := ProjectSettings.globalize_path("res://").replace("\\", "/")
+	if project_root.ends_with("/"):
+		project_root = project_root.substr(0, project_root.length() - 1)
+	var local_boot_exists := FileAccess.file_exists("res://boot.tscn")
+	var template_boot_exists := FileAccess.file_exists("res://defaultTemplate/boot.tscn")
+	if local_boot_exists:
 		base_path = "res://"
-	print("[SceneConfig] base path: %s" % base_path)
+	elif template_boot_exists:
+		base_path = "res://defaultTemplate/"
+	print("[SceneConfig] project root: %s" % project_root)
+	print("[SceneConfig] base path: %s (local_boot: %s, template_boot: %s)" % [base_path, local_boot_exists, template_boot_exists])
 	DEFAULT_PATHS = {
 		"boot": "%sboot.tscn" % base_path,
 		"main_menu": "%smain_menu.tscn" % base_path,

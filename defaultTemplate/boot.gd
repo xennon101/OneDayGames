@@ -13,8 +13,8 @@ func _ready() -> void:
 
 func _go_to_main() -> void:
 	await get_tree().create_timer(delay_seconds).timeout
-	if Engine.has_singleton("SceneManager"):
-		var sm = Engine.get_singleton("SceneManager")
+	var sm = _get_autoload("SceneManager")
+	if sm:
 		print("[Boot] transitioning to main_menu")
 		sm.change_scene("main_menu")
 	else:
@@ -22,11 +22,20 @@ func _go_to_main() -> void:
 
 
 func _show_warning_if_needed() -> void:
-	if not Engine.has_singleton("LegalManager"):
+	var lm = _get_autoload("LegalManager")
+	if lm == null:
 		return
-	var lm = Engine.get_singleton("LegalManager")
 	if not lm.is_epilepsy_warning_enabled():
 		return
 	var warning_label := $Warning
 	if warning_label:
 		warning_label.text = lm.get_epilepsy_warning_text()
+
+
+func _get_autoload(name: String) -> Object:
+	var root := get_tree().get_root()
+	if root.has_node(name):
+		return root.get_node(name)
+	if Engine.has_singleton(name):
+		return Engine.get_singleton(name)
+	return null

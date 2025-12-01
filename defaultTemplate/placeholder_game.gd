@@ -8,5 +8,15 @@ func _ready() -> void:
 
 
 func _on_exit_pressed() -> void:
-	if Engine.has_singleton("SceneManager"):
-		Engine.get_singleton("SceneManager").return_to_main_menu()
+	var sm = _get_autoload("SceneManager")
+	if sm:
+		sm.return_to_main_menu()
+
+
+func _get_autoload(name: String) -> Object:
+	var root := get_tree().get_root()
+	if root.has_node(name):
+		return root.get_node(name)
+	if Engine.has_singleton(name):
+		return Engine.get_singleton(name)
+	return null

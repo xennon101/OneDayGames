@@ -35,21 +35,26 @@ func _ensure_scene_config() -> void:
 
 
 func change_scene(id: String, show_loading := true) -> void:
+	print("[SceneManager] change_scene requested -> %s" % id)
 	if _loading:
+		print("[SceneManager] change_scene blocked, already loading")
 		return
 	if scene_config == null and Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
 	if scene_config == null:
 		if not mute_warnings:
 			push_warning("SceneManager: SceneConfig missing")
+		print("[SceneManager] abort change_scene: no SceneConfig")
 		return
 	if not scene_config.has(id):
 		if not mute_warnings:
 			push_warning("SceneManager: unknown scene id %s" % id)
+		print("[SceneManager] abort change_scene: id %s not registered" % id)
 		return
 	_loading = true
 	await _perform_scene_change(id, show_loading)
 	_loading = false
+	print("[SceneManager] change_scene finished -> %s" % current_scene_id)
 
 
 func reload_current_scene(show_loading := true) -> void:
@@ -76,14 +81,17 @@ func _perform_scene_change(id: String, show_loading: bool) -> void:
 	if scene_config == null and Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
 	var path: String = scene_config.get_scene_path(id)
+	print("[SceneManager] loading path %s for id %s" % [path, id])
 	var packed := await _load_scene_async(path)
 	if packed == null:
 		push_warning("SceneManager: failed to load scene at %s" % path)
+		print("[SceneManager] failed to load PackedScene at %s" % path)
 		_hide_loading_screen()
 		return
 	if use_fade:
 		await _fade_out()
 	get_tree().change_scene_to_packed(packed)
+	print("[SceneManager] loaded scene for id %s" % id)
 	current_scene_id = id
 	if use_fade:
 		await _fade_in()
@@ -91,14 +99,23 @@ func _perform_scene_change(id: String, show_loading: bool) -> void:
 
 
 func _load_scene_async(path: String) -> PackedScene:
+	if not ResourceLoader.exists(path):
+		print("[SceneManager] Resource does not exist: %s" % path)
+		return null
 	var status := ResourceLoader.load_threaded_request(path)
+	print("[SceneManager] load_threaded_request status: %s" % status)
 	if status != OK:
+		print("[SceneManager] load_threaded_request failed for %s" % path)
 		return null
 	while true:
 		var poll := ResourceLoader.load_threaded_get_status(path)
 		if poll == ResourceLoader.THREAD_LOAD_LOADED:
 			var res := ResourceLoader.load_threaded_get(path)
-			return res if res is PackedScene else null
+			if res is PackedScene:
+				print("[SceneManager] load_threaded_get success: %s" % path)
+				return res
+			print("[SceneManager] load_threaded_get returned non-PackedScene for %s" % path)
+			return null
 		if poll == ResourceLoader.THREAD_LOAD_FAILED:
 			return null
 		await get_tree().process_frame

@@ -21,46 +21,56 @@ func _ready() -> void:
 
 func _refresh_load_button() -> void:
 	var can_load := false
-	if Engine.has_singleton("SaveManager"):
-		var save_manager = Engine.get_singleton("SaveManager")
+	var save_manager = _get_autoload("SaveManager")
+	if save_manager:
 		can_load = save_manager.game_supports_saves and save_manager.has_save()
 	load_button.disabled = not can_load
 
 
 func _on_start_pressed() -> void:
-	if Engine.has_singleton("SceneManager"):
-		var sm = Engine.get_singleton("SceneManager")
+	var sm = _get_autoload("SceneManager")
+	if sm:
 		sm.change_scene("gameplay")
 
 
 func _on_load_pressed() -> void:
 	if load_button.disabled:
 		return
-	if Engine.has_singleton("SaveManager"):
-		var save_manager = Engine.get_singleton("SaveManager")
+	var save_manager = _get_autoload("SaveManager")
+	if save_manager:
 		var data: Dictionary = save_manager.load_game()
 		# Real games should consume data; placeholder just enters gameplay.
-		if Engine.has_singleton("SceneManager"):
-			var sm = Engine.get_singleton("SceneManager")
+		var sm = _get_autoload("SceneManager")
+		if sm:
 			sm.change_scene("gameplay")
 
 
 func _on_settings_pressed() -> void:
-	if Engine.has_singleton("SceneManager"):
-		var sm = Engine.get_singleton("SceneManager")
+	var sm = _get_autoload("SceneManager")
+	if sm:
 		sm.change_scene("settings")
 
 
 func _on_credits_pressed() -> void:
-	if Engine.has_singleton("SceneManager"):
-		var sm = Engine.get_singleton("SceneManager")
+	var sm = _get_autoload("SceneManager")
+	if sm:
 		sm.change_scene("credits")
 
 
 func _on_exit_pressed() -> void:
-	if Engine.has_singleton("EventBus"):
-		var bus = Engine.get_singleton("EventBus")
+	var bus = _get_autoload("EventBus")
+	if bus:
 		bus.emit("request_quit_game")
-	elif Engine.has_singleton("SceneManager"):
-		var sm = Engine.get_singleton("SceneManager")
-		sm.quit()
+	else:
+		var sm = _get_autoload("SceneManager")
+		if sm:
+			sm.quit()
+
+
+func _get_autoload(name: String) -> Object:
+	var root := get_tree().get_root()
+	if root.has_node(name):
+		return root.get_node(name)
+	if Engine.has_singleton(name):
+		return Engine.get_singleton(name)
+	return null
