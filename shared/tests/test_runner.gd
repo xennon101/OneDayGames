@@ -35,6 +35,8 @@ func _run(name: String, fn: Callable) -> void:
 		_failures += 1
 		err = str(result)
 		push_error("FAIL: %s -> %s" % [name, err])
+	if get_root():
+		get_root().queue_free()
 
 
 func _test_scene_config() -> void:

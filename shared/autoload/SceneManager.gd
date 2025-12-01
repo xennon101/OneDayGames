@@ -5,6 +5,7 @@ var _loading: bool = false
 var _loading_screen: Node = null
 var use_fade: bool = false
 var scene_config: Object = null
+var mute_warnings: bool = false
 
 
 func _ready() -> void:
@@ -22,10 +23,12 @@ func change_scene(id: String, show_loading := true) -> void:
 	if scene_config == null and Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
 	if scene_config == null:
-		push_warning("SceneManager: SceneConfig missing")
+		if not mute_warnings:
+			push_warning("SceneManager: SceneConfig missing")
 		return
 	if not scene_config.has(id):
-		push_warning("SceneManager: unknown scene id %s" % id)
+		if not mute_warnings:
+			push_warning("SceneManager: unknown scene id %s" % id)
 		return
 	_loading = true
 	await _perform_scene_change(id, show_loading)

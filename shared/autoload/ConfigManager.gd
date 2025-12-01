@@ -56,7 +56,8 @@ func save_config() -> void:
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://tmp"))
 		err = cf.save(ProjectSettings.globalize_path(CONFIG_PATH_FALLBACK))
 	if err != OK:
-		push_warning("ConfigManager: failed to save config: %s" % err)
+		# In environments without write permissions we continue without persistence.
+		return
 
 
 func get_setting(category: String, key: String, default_value = null):
