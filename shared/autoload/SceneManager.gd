@@ -9,12 +9,14 @@ var mute_warnings: bool = false
 
 
 func _ready() -> void:
+	print("[SceneManager] Engine singletons at ready: %s" % str(Engine.get_singleton_list()))
 	if Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
 	if Engine.has_singleton("EventBus"):
 		var bus = Engine.get_singleton("EventBus")
 		bus.subscribe("request_quit_game", self, "_on_request_quit_game")
 		bus.subscribe("request_return_to_main_menu", self, "_on_request_return_to_main_menu")
+	print("[SceneManager] ready. SceneConfig exists: %s at %s" % [scene_config != null, ProjectSettings.globalize_path("res://")])
 
 
 func change_scene(id: String, show_loading := true) -> void:

@@ -3,6 +3,7 @@ extends Control
 @export var delay_seconds := 1.0
 
 func _ready() -> void:
+	print("[Boot] ready, applying theme and warning")
 	var theme_res := load("res://shared/ui/default_theme.tres")
 	if theme_res:
 		theme = theme_res
@@ -14,7 +15,10 @@ func _go_to_main() -> void:
 	await get_tree().create_timer(delay_seconds).timeout
 	if Engine.has_singleton("SceneManager"):
 		var sm = Engine.get_singleton("SceneManager")
+		print("[Boot] transitioning to main_menu")
 		sm.change_scene("main_menu")
+	else:
+		print("[Boot] SceneManager missing, cannot change scene")
 
 
 func _show_warning_if_needed() -> void:
