@@ -10,12 +10,32 @@ var mute_warnings: bool = false
 
 func _ready() -> void:
 	print("[SceneManager] Engine singletons at ready: %s" % str(Engine.get_singleton_list()))
+	print("[SceneManager] autoload SceneConfig path: %s" % ProjectSettings.get_setting("autoload/SceneConfig", ""))
 	if Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
+	elif get_tree().has_node("/root/SceneConfig"):
+		scene_config = get_tree().get_node("/root/SceneConfig")
 	if Engine.has_singleton("EventBus"):
 		var bus = Engine.get_singleton("EventBus")
 		bus.subscribe("request_quit_game", self, "_on_request_quit_game")
 		bus.subscribe("request_return_to_main_menu", self, "_on_request_return_to_main_menu")
+	print("[SceneManager] scene_config set: %s" % (scene_config != null))
+	call_deferred("_ensure_scene_config")
+
+
+func _ensure_scene_config() -> void:
+	if scene_config == null and get_tree().has_node("/root/SceneConfig"):
+		scene_config = get_tree().get_node("/root/SceneConfig")
+		print("[SceneManager] scene_config acquired after defer: %s" % (scene_config != null))
+	if scene_config == null:
+		var default_path := "res://shared/autoload/SceneConfig.gd"
+		var res := ResourceLoader.load(default_path)
+		if res:
+			var inst := res.new()
+			inst.name = "SceneConfig"
+			get_tree().get_root().add_child(inst)
+			scene_config = inst
+			print("[SceneManager] scene_config instantiated from %s" % default_path)
 	print("[SceneManager] ready. SceneConfig exists: %s at %s" % [scene_config != null, ProjectSettings.globalize_path("res://")])
 
 
