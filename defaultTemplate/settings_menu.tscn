@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://settingsmenu"]
 
 [ext_resource type="Theme" path="res://shared/ui/default_theme.tres" id=1]
-[ext_resource type="Script" path="res://defaultTemplate/settings_menu.gd" id=2]
+[ext_resource type="Script" path="res://settings_menu.gd" id=2]
 
 [node name="SettingsMenu" type="Control"]
 layout_mode = 3

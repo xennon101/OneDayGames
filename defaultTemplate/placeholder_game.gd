@@ -9,4 +9,4 @@ func _ready() -> void:
 
 func _on_exit_pressed() -> void:
 	if Engine.has_singleton("SceneManager"):
-		SceneManager.return_to_main_menu()
+		Engine.get_singleton("SceneManager").return_to_main_menu()

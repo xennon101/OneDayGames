@@ -22,37 +22,45 @@ func _ready() -> void:
 func _refresh_load_button() -> void:
 	var can_load := false
 	if Engine.has_singleton("SaveManager"):
-		can_load = SaveManager.game_supports_saves and SaveManager.has_save()
+		var save_manager = Engine.get_singleton("SaveManager")
+		can_load = save_manager.game_supports_saves and save_manager.has_save()
 	load_button.disabled = not can_load
 
 
 func _on_start_pressed() -> void:
 	if Engine.has_singleton("SceneManager"):
-		SceneManager.change_scene("gameplay")
+		var sm = Engine.get_singleton("SceneManager")
+		sm.change_scene("gameplay")
 
 
 func _on_load_pressed() -> void:
 	if load_button.disabled:
 		return
 	if Engine.has_singleton("SaveManager"):
-		var data := SaveManager.load_game()
+		var save_manager = Engine.get_singleton("SaveManager")
+		var data: Dictionary = save_manager.load_game()
 		# Real games should consume data; placeholder just enters gameplay.
 		if Engine.has_singleton("SceneManager"):
-			SceneManager.change_scene("gameplay")
+			var sm = Engine.get_singleton("SceneManager")
+			sm.change_scene("gameplay")
 
 
 func _on_settings_pressed() -> void:
 	if Engine.has_singleton("SceneManager"):
-		SceneManager.change_scene("settings")
+		var sm = Engine.get_singleton("SceneManager")
+		sm.change_scene("settings")
 
 
 func _on_credits_pressed() -> void:
 	if Engine.has_singleton("SceneManager"):
-		SceneManager.change_scene("credits")
+		var sm = Engine.get_singleton("SceneManager")
+		sm.change_scene("credits")
 
 
 func _on_exit_pressed() -> void:
 	if Engine.has_singleton("EventBus"):
-		EventBus.emit("request_quit_game")
+		var bus = Engine.get_singleton("EventBus")
+		bus.emit("request_quit_game")
 	elif Engine.has_singleton("SceneManager"):
-		SceneManager.quit()
+		var sm = Engine.get_singleton("SceneManager")
+		sm.quit()

@@ -11,6 +11,7 @@ const RESOLUTIONS := ["1280x720", "1600x900", "1920x1080", "2560x1440"]
 @onready var music_slider: HSlider = $Center/Tabs/Audio/AudioVBox/MusicHBox/MusicSlider
 @onready var sfx_slider: HSlider = $Center/Tabs/Audio/AudioVBox/SfxHBox/SfxSlider
 var _action_buttons: Dictionary = {}
+var _input_manager: Object = null
 
 
 func _ready() -> void:
@@ -30,8 +31,9 @@ func _ready() -> void:
 	sfx_slider.value_changed.connect(_on_sfx_changed)
 	$Center/BackButton.pressed.connect(_on_back_pressed)
 	if Engine.has_singleton("InputManager"):
-		InputManager.rebind_finished.connect(_on_rebind_finished)
-		InputManager.rebind_cancelled.connect(_on_rebind_cancelled)
+		_input_manager = Engine.get_singleton("InputManager")
+		_input_manager.rebind_finished.connect(_on_rebind_finished)
+		_input_manager.rebind_cancelled.connect(_on_rebind_cancelled)
 
 
 func _populate_resolution_options() -> void:
@@ -43,10 +45,11 @@ func _populate_resolution_options() -> void:
 func _load_display_settings() -> void:
 	if not Engine.has_singleton("ConfigManager"):
 		return
-	fullscreen_cb.button_pressed = ConfigManager.get_setting("display", "fullscreen", false)
-	borderless_cb.button_pressed = ConfigManager.get_setting("display", "borderless", false)
-	vsync_cb.button_pressed = ConfigManager.get_setting("display", "vsync", true)
-	var current_res: String = ConfigManager.get_setting("display", "resolution", "1920x1080")
+	var cfg = Engine.get_singleton("ConfigManager")
+	fullscreen_cb.button_pressed = cfg.get_setting("display", "fullscreen", false)
+	borderless_cb.button_pressed = cfg.get_setting("display", "borderless", false)
+	vsync_cb.button_pressed = cfg.get_setting("display", "vsync", true)
+	var current_res: String = cfg.get_setting("display", "resolution", "1920x1080")
 	for i in RESOLUTIONS.size():
 		if RESOLUTIONS[i] == current_res:
 			resolution_opt.select(i)
@@ -56,9 +59,10 @@ func _load_display_settings() -> void:
 func _load_audio_settings() -> void:
 	if not Engine.has_singleton("ConfigManager"):
 		return
-	master_slider.value = ConfigManager.get_setting("audio", "master_volume", 1.0)
-	music_slider.value = ConfigManager.get_setting("audio", "music_volume", 0.8)
-	sfx_slider.value = ConfigManager.get_setting("audio", "sfx_volume", 0.8)
+	var cfg = Engine.get_singleton("ConfigManager")
+	master_slider.value = cfg.get_setting("audio", "master_volume", 1.0)
+	music_slider.value = cfg.get_setting("audio", "music_volume", 0.8)
+	sfx_slider.value = cfg.get_setting("audio", "sfx_volume", 0.8)
 
 
 func _build_keybinds() -> void:
@@ -66,8 +70,10 @@ func _build_keybinds() -> void:
 		child.queue_free()
 	if not Engine.has_singleton("InputManager"):
 		return
+	if _input_manager == null:
+		_input_manager = Engine.get_singleton("InputManager")
 	_action_buttons.clear()
-	for action_name in InputManager.get_default_actions().keys():
+	for action_name in _input_manager.get_default_actions().keys():
 		var row := HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_CENTER
 		row.custom_minimum_size.y = 28
@@ -78,7 +84,7 @@ func _build_keybinds() -> void:
 		button.text = _event_to_text(InputMap.action_get_events(action_name))
 		button.pressed.connect(func():
 			button.text = "Press key..."
-			InputManager.start_rebind(action_name)
+			_input_manager.start_rebind(action_name)
 		)
 		row.add_child(label)
 		row.add_child(button)
@@ -88,45 +94,45 @@ func _build_keybinds() -> void:
 
 func _on_fullscreen_toggled(pressed: bool) -> void:
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("display", "fullscreen", pressed)
+		Engine.get_singleton("ConfigManager").set_setting("display", "fullscreen", pressed)
 
 
 func _on_borderless_toggled(pressed: bool) -> void:
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("display", "borderless", pressed)
+		Engine.get_singleton("ConfigManager").set_setting("display", "borderless", pressed)
 
 
 func _on_vsync_toggled(pressed: bool) -> void:
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("display", "vsync", pressed)
+		Engine.get_singleton("ConfigManager").set_setting("display", "vsync", pressed)
 
 
 func _on_resolution_selected(index: int) -> void:
 	if index < 0 or index >= RESOLUTIONS.size():
 		return
-	var value := RESOLUTIONS[index]
+	var value: String = RESOLUTIONS[index]
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("display", "resolution", value)
+		Engine.get_singleton("ConfigManager").set_setting("display", "resolution", value)
 
 
 func _on_master_changed(value: float) -> void:
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("audio", "master_volume", value)
+		Engine.get_singleton("ConfigManager").set_setting("audio", "master_volume", value)
 
 
 func _on_music_changed(value: float) -> void:
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("audio", "music_volume", value)
+		Engine.get_singleton("ConfigManager").set_setting("audio", "music_volume", value)
 
 
 func _on_sfx_changed(value: float) -> void:
 	if Engine.has_singleton("ConfigManager"):
-		ConfigManager.set_setting("audio", "sfx_volume", value)
+		Engine.get_singleton("ConfigManager").set_setting("audio", "sfx_volume", value)
 
 
 func _on_back_pressed() -> void:
 	if Engine.has_singleton("SceneManager"):
-		SceneManager.return_to_main_menu()
+		Engine.get_singleton("SceneManager").return_to_main_menu()
 
 
 func _on_rebind_finished(action_name: String, _event: InputEvent) -> void:
@@ -146,7 +152,7 @@ func _update_binding_button(action_name: String) -> void:
 func _event_to_text(events: Array) -> String:
 	if events.is_empty():
 		return "Unbound"
-	var ev := events[0]
+	var ev: InputEvent = events[0]
 	if ev is InputEventKey:
 		return OS.get_keycode_string(ev.keycode)
 	if ev is InputEventMouseButton:
