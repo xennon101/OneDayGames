@@ -3,6 +3,10 @@ extends Node
 const CONFIG_PATH := "user://config.cfg"
 const CONFIG_PATH_FALLBACK := "res://tmp/config.cfg"
 
+const TEMPLATE_ASSETS_CONFIG_REL := "config/template_assets.json"
+const TEMPLATE_INPUT_ACTIONS_REL := "config/input_actions.json"
+const TEMPLATE_AUDIO_REGISTRY_REL := "config/audio_registry.json"
+
 const DEFAULT_CONFIG := {
 	"version": 1,
 	"display": {
@@ -23,10 +27,14 @@ const DEFAULT_CONFIG := {
 }
 
 var _config: Dictionary = DEFAULT_CONFIG.duplicate(true)
+var _template_assets_config: Dictionary = {}
+var _template_input_actions: Dictionary = {}
+var _template_audio_registry: Dictionary = {}
 
 
 func _ready() -> void:
 	load_config()
+	_load_template_configs()
 
 
 func load_config() -> void:
@@ -78,6 +86,22 @@ func get_full_config() -> Dictionary:
 	return _config.duplicate(true)
 
 
+func get_template_assets_config() -> Dictionary:
+	return _template_assets_config.duplicate(true)
+
+
+func get_template_input_actions() -> Dictionary:
+	return _template_input_actions.get("actions", {}).duplicate(true)
+
+
+func get_template_audio_registry() -> Dictionary:
+	return _template_audio_registry.duplicate(true)
+
+
+func apply_display_settings_from_dict(display: Dictionary) -> void:
+	_apply_display_settings_internal(display)
+
+
 func _merge_missing(target: Dictionary, defaults: Dictionary) -> void:
 	for key in defaults.keys():
 		if not target.has(key):
@@ -101,6 +125,10 @@ func _apply_category(category: String) -> void:
 
 func _apply_display_settings() -> void:
 	var display: Dictionary = _config.get("display", {})
+	_apply_display_settings_internal(display)
+
+
+func _apply_display_settings_internal(display: Dictionary) -> void:
 	if not display:
 		return
 	var window: int = 0
@@ -132,3 +160,51 @@ func _apply_input_settings() -> void:
 	if Engine.has_singleton("InputManager"):
 		var input_manager = Engine.get_singleton("InputManager")
 		input_manager.apply_bindings_from_config()
+
+
+func _load_template_configs() -> void:
+	_template_assets_config = _load_json_dict(_resolve_template_path(TEMPLATE_ASSETS_CONFIG_REL), {
+		"company": {
+			"name": "OneDayGames",
+			"logo_path": "",
+			"fallback_text": "OneDayGames",
+			"footer": "© OneDayGames. All rights reserved."
+		},
+		"game": {
+			"title": "OneDay Template",
+			"logo_path": "",
+			"fallback_text": "OneDay Template"
+		},
+		"legal": {
+			"epilepsy_warning": "This game may contain flashing lights. Player discretion advised.",
+			"mission": "OneDayGames builds games in around one man-day by leaning on AI for code, art, sound, and design.",
+			"credits_text": "Created with the OneDayGames default template.",
+			"footer": "© OneDayGames. All rights reserved."
+		}
+	})
+	_template_input_actions = _load_json_dict(_resolve_template_path(TEMPLATE_INPUT_ACTIONS_REL), {"actions": {}})
+	_template_audio_registry = _load_json_dict(_resolve_template_path(TEMPLATE_AUDIO_REGISTRY_REL), {"music": {}, "sfx": {}})
+
+
+func _load_json_dict(path: String, fallback: Dictionary) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return fallback.duplicate(true)
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return fallback.duplicate(true)
+	var text := file.get_as_text()
+	file.close()
+	var data: Variant = JSON.parse_string(text)
+	if typeof(data) == TYPE_DICTIONARY:
+		return data
+	return fallback.duplicate(true)
+
+
+func _resolve_template_path(relative_path: String) -> String:
+	var direct := "res://%s" % relative_path
+	var template_path := "res://defaultTemplate/%s" % relative_path
+	if FileAccess.file_exists(direct):
+		return direct
+	if FileAccess.file_exists(template_path):
+		return template_path
+	return direct

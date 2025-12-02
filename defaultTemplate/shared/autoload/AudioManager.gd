@@ -9,6 +9,7 @@ var _music_registry: Dictionary = {}
 var _music_player_a: AudioStreamPlayer
 var _music_player_b: AudioStreamPlayer
 var _active_music_player: AudioStreamPlayer
+var _tags: Dictionary = {}
 
 
 func _ready() -> void:
@@ -23,10 +24,35 @@ func _ready() -> void:
 
 func register_sfx(id: String, stream: AudioStream) -> void:
 	_sfx_registry[id] = stream
+	_tags[id] = "sfx"
 
 
 func register_music(id: String, stream: AudioStream) -> void:
 	_music_registry[id] = stream
+	_tags[id] = "music"
+
+
+func register_audio(id: String, stream: AudioStream, tag: String) -> void:
+	match tag:
+		"music":
+			register_music(id, stream)
+		"sfx", "sound":
+			register_sfx(id, stream)
+		_:
+			register_sfx(id, stream)
+
+
+func register_from_registry(registry: Dictionary) -> void:
+	for id in registry.get("music", {}).keys():
+		var entry: Dictionary = registry["music"][id]
+		var stream := _load_stream_from_entry(entry)
+		if stream:
+			register_music(id, stream)
+	for id in registry.get("sfx", {}).keys():
+		var entry: Dictionary = registry["sfx"][id]
+		var stream := _load_stream_from_entry(entry)
+		if stream:
+			register_sfx(id, stream)
 
 
 func play_sfx(id: String) -> void:
@@ -90,3 +116,13 @@ func _crossfade(from_player: AudioStreamPlayer, to_player: AudioStreamPlayer, du
 	tween.tween_property(to_player, "volume_db", 0.0, duration)
 	tween.parallel().tween_property(from_player, "volume_db", -80.0, duration)
 	tween.tween_callback(Callable(from_player, "stop"))
+
+
+func _load_stream_from_entry(entry: Dictionary) -> AudioStream:
+	var path: String = entry.get("path", "")
+	if path.is_empty():
+		return null
+	if not ResourceLoader.exists(path):
+		return null
+	var res := ResourceLoader.load(path)
+	return res if res is AudioStream else null

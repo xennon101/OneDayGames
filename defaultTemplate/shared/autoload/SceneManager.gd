@@ -3,6 +3,7 @@ extends Node
 var current_scene_id: String = ""
 var _loading: bool = false
 var _loading_screen: Node = null
+var _loading_screen_controller: Object = null
 var use_fade: bool = false
 var scene_config: Object = null
 var mute_warnings: bool = false
@@ -77,12 +78,12 @@ func quit() -> void:
 
 func _perform_scene_change(id: String, show_loading: bool) -> void:
 	if show_loading:
-		_show_loading_screen()
+		_show_loading_screen(id)
 	if scene_config == null and Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
 	var path: String = scene_config.get_scene_path(id)
 	print("[SceneManager] loading path %s for id %s" % [path, id])
-	var packed := await _load_scene_async(path)
+	var packed := await _load_scene_async(path, id)
 	if packed == null:
 		push_warning("SceneManager: failed to load scene at %s" % path)
 		print("[SceneManager] failed to load PackedScene at %s" % path)
@@ -98,7 +99,7 @@ func _perform_scene_change(id: String, show_loading: bool) -> void:
 	_hide_loading_screen()
 
 
-func _load_scene_async(path: String) -> PackedScene:
+func _load_scene_async(path: String, id: String) -> PackedScene:
 	if not ResourceLoader.exists(path):
 		print("[SceneManager] Resource does not exist: %s" % path)
 		return null
@@ -107,12 +108,17 @@ func _load_scene_async(path: String) -> PackedScene:
 	if status != OK:
 		print("[SceneManager] load_threaded_request failed for %s" % path)
 		return null
+	_set_loading_status("Loading %s..." % id, 0.0)
 	while true:
-		var poll := ResourceLoader.load_threaded_get_status(path)
+		var progress: Array = []
+		var poll := ResourceLoader.load_threaded_get_status(path, progress)
+		if progress.size() > 0:
+			_set_loading_status("Loading %s..." % id, progress[0])
 		if poll == ResourceLoader.THREAD_LOAD_LOADED:
 			var res := ResourceLoader.load_threaded_get(path)
 			if res is PackedScene:
 				print("[SceneManager] load_threaded_get success: %s" % path)
+				_set_loading_status("Loaded %s" % id, 1.0)
 				return res
 			print("[SceneManager] load_threaded_get returned non-PackedScene for %s" % path)
 			return null
@@ -122,7 +128,7 @@ func _load_scene_async(path: String) -> PackedScene:
 	return null
 
 
-func _show_loading_screen() -> void:
+func _show_loading_screen(id: String = "") -> void:
 	if scene_config == null and Engine.has_singleton("SceneConfig"):
 		scene_config = Engine.get_singleton("SceneConfig")
 	if scene_config == null or not scene_config.has("loading"):
@@ -131,13 +137,17 @@ func _show_loading_screen() -> void:
 	var packed := ResourceLoader.load(loading_path)
 	if packed is PackedScene:
 		_loading_screen = packed.instantiate()
+		_loading_screen_controller = _loading_screen
 		get_tree().root.add_child(_loading_screen)
+		if id != "" and _loading_screen_controller and _loading_screen_controller.has_method("set_status_text"):
+			_loading_screen_controller.call("set_status_text", "Loading %s..." % id)
 
 
 func _hide_loading_screen() -> void:
 	if _loading_screen:
 		_loading_screen.queue_free()
 		_loading_screen = null
+		_loading_screen_controller = null
 
 
 func _fade_out() -> void:
@@ -178,3 +188,10 @@ func _on_request_quit_game(_payload: Variant = null) -> void:
 
 func _on_request_return_to_main_menu(_payload: Variant = null) -> void:
 	return_to_main_menu()
+
+
+func _set_loading_status(text: String, progress: float = -1.0) -> void:
+	if _loading_screen_controller and _loading_screen_controller.has_method("set_status_text"):
+		_loading_screen_controller.call("set_status_text", text)
+	if progress >= 0.0 and _loading_screen_controller and _loading_screen_controller.has_method("set_progress"):
+		_loading_screen_controller.call("set_progress", progress)

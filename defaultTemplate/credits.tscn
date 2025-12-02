@@ -29,11 +29,34 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -160.0
-offset_top = -140.0
-offset_right = 160.0
-offset_bottom = 140.0
+offset_left = -180.0
+offset_top = -200.0
+offset_right = 180.0
+offset_bottom = 200.0
 alignment = 1
+
+[node name="Logos" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+alignment = 1
+custom_constants/separation = 4
+
+[node name="CompanyLogo" type="TextureRect" parent="Center/Logos"]
+layout_mode = 2
+stretch_mode = 4
+
+[node name="CompanyLogoFallback" type="Label" parent="Center/Logos"]
+layout_mode = 2
+text = "OneDayGames"
+horizontal_alignment = 1
+
+[node name="GameLogo" type="TextureRect" parent="Center/Logos"]
+layout_mode = 2
+stretch_mode = 4
+
+[node name="GameLogoFallback" type="Label" parent="Center/Logos"]
+layout_mode = 2
+text = "OneDay Template"
+horizontal_alignment = 1
 
 [node name="Company" type="Label" parent="Center"]
 layout_mode = 2
@@ -50,6 +73,12 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "Credits..."
 
+[node name="Mission" type="Label" parent="Center"]
+layout_mode = 2
+text = "OneDayGames builds games in around one man-day by leaning on AI for code, art, sound, and design."
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [node name="Copy" type="Label" parent="Center"]
 layout_mode = 2
 text = "(c) OneDayGames"
@@ -58,3 +87,22 @@ horizontal_alignment = 1
 [node name="BackButton" type="Button" parent="Center"]
 layout_mode = 2
 text = "Back"
+
+[node name="Footer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="LegalFooter" type="Label" parent="Footer"]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 24.0
+horizontal_alignment = 1
+text = "© OneDayGames. All rights reserved."

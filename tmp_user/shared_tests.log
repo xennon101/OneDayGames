@@ -1,0 +1,56 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+ERROR: Failed to read the root certificate store.
+   at: get_system_ca_certificates (platform/windows/os_windows.cpp:2548)
+PASS: SceneConfig registers and resolves
+PASS: EventBus publish/subscribe
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] set_setting (res://shared/autoload/ConfigManager.gd:78)
+       [2] _test_config_manager (res://shared/tests/test_runner.gd:68)
+       [3] _run (res://shared/tests/test_runner.gd:31)
+       [4] _run_all (res://shared/tests/test_runner.gd:19)
+       [5] _initialize (res://shared/tests/test_runner.gd:11)
+PASS: ConfigManager merges defaults
+PASS: InputManager rebind flow
+PASS: AudioManager updates volumes safely
+PASS: SaveManager writes and reads
+PASS: LegalManager provides defaults
+[SceneManager] change_scene requested -> nonexistent
+WARNING: SceneManager: unknown scene id nonexistent
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] change_scene (res://shared/autoload/SceneManager.gd:52)
+       [1] _test_scene_manager_guard (res://shared/tests/test_runner.gd:119)
+       [2] _run (res://shared/tests/test_runner.gd:31)
+       [3] _run_all (res://shared/tests/test_runner.gd:24)
+       [4] _initialize (res://shared/tests/test_runner.gd:11)
+[SceneManager] abort change_scene: id nonexistent not registered
+PASS: SceneManager handles unknown id gracefully
+Tests run: 8, failures: 0
+[SceneConfig] autoload setting: {  }
+[SceneConfig] project root: C:/Dropbox/work/OneDayGames/GodotProjects
+[SceneConfig] base path: res://defaultTemplate/ (local_boot: false, template_boot: true)
+[SceneConfig] registered ids: ["boot", "main_menu", "loading", "settings", "credits", "gameplay"]
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:52)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:36)
+[SceneManager] Engine singletons at ready: ["Performance", "Engine", "ProjectSettings", "OS", "Time", "TextServerManager", "PhysicsServer2DManager", "PhysicsServer3DManager", "NavigationMeshGenerator", "IP", "Geometry2D", "Geometry3D", "ResourceLoader", "ResourceSaver", "ClassDB", "Marshalls", "TranslationServer", "Input", "InputMap", "EngineDebugger", "GDExtensionManager", "ResourceUID", "WorkerThreadPool", "ThemeDB", "JavaClassWrapper", "JavaScriptBridge", "AudioServer", "CameraServer", "DisplayServer", "NativeMenu", "RenderingServer", "NavigationServer2D", "NavigationServer3D", "PhysicsServer2D", "PhysicsServer3D", "XRServer"]
+[SceneManager] autoload SceneConfig path: res://shared/autoload/SceneConfig.gd
+[SceneManager] scene_config set: true
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:52)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:36)
+[SceneManager] Engine singletons at ready: ["Performance", "Engine", "ProjectSettings", "OS", "Time", "TextServerManager", "PhysicsServer2DManager", "PhysicsServer3DManager", "NavigationMeshGenerator", "IP", "Geometry2D", "Geometry3D", "ResourceLoader", "ResourceSaver", "ClassDB", "Marshalls", "TranslationServer", "Input", "InputMap", "EngineDebugger", "GDExtensionManager", "ResourceUID", "WorkerThreadPool", "ThemeDB", "JavaClassWrapper", "JavaScriptBridge", "AudioServer", "CameraServer", "DisplayServer", "NativeMenu", "RenderingServer", "NavigationServer2D", "NavigationServer3D", "PhysicsServer2D", "PhysicsServer3D", "XRServer"]
+[SceneManager] autoload SceneConfig path: res://shared/autoload/SceneConfig.gd
+[SceneManager] scene_config set: true
+[SceneManager] ready. SceneConfig exists: true at C:/Dropbox/work/OneDayGames/GodotProjects/
+[SceneManager] ready. SceneConfig exists: true at C:/Dropbox/work/OneDayGames/GodotProjects/

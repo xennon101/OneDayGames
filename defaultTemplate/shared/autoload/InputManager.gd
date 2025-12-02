@@ -19,16 +19,18 @@ var _listening_action: String = ""
 
 
 func _ready() -> void:
+	_refresh_defaults_from_config()
 	apply_bindings_from_config()
 
 
 func apply_bindings_from_config() -> void:
+	var defaults := get_default_actions()
 	var config: Dictionary = _get_config_actions()
-	for action in DEFAULT_ACTION_CONFIGS.keys():
+	for action in defaults.keys():
 		if not InputMap.has_action(action):
 			InputMap.add_action(action)
 		InputMap.action_erase_events(action)
-		var events: Array = config.get(action, DEFAULT_ACTION_CONFIGS[action])
+		var events: Array = config.get(action, defaults[action])
 		for ev_cfg in events:
 			var ev := _config_to_event(ev_cfg)
 			if ev:
@@ -72,14 +74,14 @@ func _set_binding(action_name: String, event: InputEvent) -> void:
 	InputMap.action_add_event(action_name, event)
 	var actions: Dictionary = _get_config_actions()
 	actions[action_name] = [_event_to_config(event)]
-	if Engine.has_singleton("ConfigManager"):
-		var cfg = Engine.get_singleton("ConfigManager")
+	var cfg = _get_config_manager()
+	if cfg:
 		cfg.set_setting("input", "actions", actions)
 
 
 func _get_config_actions() -> Dictionary:
-	if Engine.has_singleton("ConfigManager"):
-		var cfg = Engine.get_singleton("ConfigManager")
+	var cfg = _get_config_manager()
+	if cfg:
 		var actions: Dictionary = cfg.get_setting("input", "actions", {})
 		if typeof(actions) == TYPE_DICTIONARY:
 			return actions
@@ -110,4 +112,25 @@ func _event_to_config(event: InputEvent) -> Dictionary:
 
 
 func get_default_actions() -> Dictionary:
+	_refresh_defaults_from_config()
 	return DEFAULT_ACTION_CONFIGS.duplicate(true)
+
+
+func _refresh_defaults_from_config() -> void:
+	var cfg = _get_config_manager()
+	if cfg:
+		var config_defaults: Dictionary = cfg.get_template_input_actions()
+		if not config_defaults.is_empty():
+			DEFAULT_ACTION_CONFIGS = config_defaults
+
+
+func _get_config_manager() -> Object:
+	if Engine.has_singleton("ConfigManager"):
+		return Engine.get_singleton("ConfigManager")
+	if not is_inside_tree():
+		return null
+	var tree := get_tree()
+	var root := tree.get_root()
+	if root and root.has_node("ConfigManager"):
+		return root.get_node("ConfigManager")
+	return null

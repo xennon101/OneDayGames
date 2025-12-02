@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://loadingscene"]
+[gd_scene load_steps=3 format=3 uid="uid://loadingscene"]
 
 [ext_resource type="Theme" path="res://shared/ui/default_theme.tres" id=1]
+[ext_resource type="Script" path="res://loading_screen.gd" id=2]
 
 [node name="LoadingScreen" type="Control"]
 layout_mode = 3
@@ -10,6 +11,7 @@ anchor_top = 0.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = ExtResource("1")
+script = ExtResource("2")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -27,13 +29,34 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -80.0
-offset_top = -30.0
-offset_right = 80.0
-offset_bottom = 30.0
+offset_left = -180.0
+offset_top = -160.0
+offset_right = 180.0
+offset_bottom = 160.0
 alignment = 1
+custom_constants/separation = 8
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="CompanyLogo" type="TextureRect" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+stretch_mode = 4
+
+[node name="CompanyLogoFallback" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "OneDayGames"
+horizontal_alignment = 1
+
+[node name="GameLogo" type="TextureRect" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+stretch_mode = 4
+
+[node name="GameLogoFallback" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "OneDay Template"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "Loading..."
 horizontal_alignment = 1
@@ -42,4 +65,25 @@ horizontal_alignment = 1
 layout_mode = 2
 min_value = 0.0
 max_value = 1.0
-value = 0.5
+value = 0.0
+
+[node name="Footer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="LegalFooter" type="Label" parent="Footer"]
+layout_mode = 0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 360.0
+offset_bottom = 24.0
+horizontal_alignment = 1
+text = "© OneDayGames. All rights reserved."

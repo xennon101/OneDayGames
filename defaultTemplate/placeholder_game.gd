@@ -8,9 +8,16 @@ func _ready() -> void:
 
 
 func _on_exit_pressed() -> void:
+	_play_ui_click()
 	var sm = _get_autoload("SceneManager")
 	if sm:
 		sm.return_to_main_menu()
+
+
+func _play_ui_click() -> void:
+	var audio = _get_autoload("AudioManager")
+	if audio and audio.has_method("play_sfx"):
+		audio.play_sfx("ui_click")
 
 
 func _get_autoload(name: String) -> Object:

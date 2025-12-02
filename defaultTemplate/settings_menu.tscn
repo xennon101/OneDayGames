@@ -29,12 +29,37 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -220.0
-offset_top = -180.0
-offset_right = 220.0
-offset_bottom = 180.0
+offset_left = -240.0
+offset_top = -200.0
+offset_right = 240.0
+offset_bottom = 200.0
 alignment = 1
 custom_constants/separation = 12
+
+[node name="Header" type="HBoxContainer" parent="Center"]
+layout_mode = 2
+alignment = 1
+custom_constants/separation = 12
+
+[node name="CompanyLogo" type="TextureRect" parent="Center/Header"]
+layout_mode = 2
+size_flags_horizontal = 1
+stretch_mode = 4
+
+[node name="CompanyLogoFallback" type="Label" parent="Center/Header"]
+layout_mode = 2
+text = "OneDayGames"
+horizontal_alignment = 1
+
+[node name="GameLogo" type="TextureRect" parent="Center/Header"]
+layout_mode = 2
+size_flags_horizontal = 1
+stretch_mode = 4
+
+[node name="GameLogoFallback" type="Label" parent="Center/Header"]
+layout_mode = 2
+text = "OneDay Template"
+horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="Center"]
 layout_mode = 2
@@ -107,6 +132,23 @@ text = "Resolution"
 [node name="Resolution" type="OptionButton" parent="Center/Tabs/Display/DisplayVBox/ResolutionHBox"]
 layout_mode = 2
 
+[node name="ApplyButton" type="Button" parent="Center/Tabs/Display/DisplayVBox"]
+layout_mode = 2
+text = "Apply"
+
+[node name="ApplyConfirm" type="ConfirmationDialog" parent="Center/Tabs/Display/DisplayVBox"]
+dialog_text = "Keep these display settings?"
+
+[node name="Label" type="Label" parent="Center/Tabs/Display/DisplayVBox/ApplyConfirm"]
+layout_mode = 2
+text = "Keep these display settings?"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="RevertTimer" type="Timer" parent="Center/Tabs/Display/DisplayVBox/ApplyConfirm"]
+wait_time = 15.0
+one_shot = true
+
 [node name="Keybinds" type="Control" parent="Center/Tabs"]
 layout_mode = 3
 
@@ -153,9 +195,9 @@ text = "Master Volume"
 [node name="MasterSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
 layout_mode = 2
 min_value = 0.0
-max_value = 1.0
-step = 0.01
-value = 1.0
+max_value = 100.0
+step = 1.0
+value = 100.0
 
 [node name="MusicHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
 layout_mode = 2
@@ -169,9 +211,9 @@ text = "Music Volume"
 [node name="MusicSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
 layout_mode = 2
 min_value = 0.0
-max_value = 1.0
-step = 0.01
-value = 0.8
+max_value = 100.0
+step = 1.0
+value = 80.0
 
 [node name="SfxHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
 layout_mode = 2
@@ -185,10 +227,29 @@ text = "SFX Volume"
 [node name="SfxSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
 layout_mode = 2
 min_value = 0.0
-max_value = 1.0
-step = 0.01
-value = 0.8
+max_value = 100.0
+step = 1.0
+value = 80.0
 
 [node name="BackButton" type="Button" parent="Center"]
 layout_mode = 2
 text = "Back"
+
+[node name="Footer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -50.0
+offset_right = -10.0
+offset_bottom = -10.0
+
+[node name="LegalFooter" type="Label" parent="Footer"]
+layout_mode = 0
+offset_right = 360.0
+offset_bottom = 24.0
+horizontal_alignment = 1
+text = "© OneDayGames. All rights reserved."

@@ -1,0 +1,28 @@
+{
+  "actions": {
+    "move_left": [
+      { "type": "key", "keycode": 65 }
+    ],
+    "move_right": [
+      { "type": "key", "keycode": 68 }
+    ],
+    "move_up": [
+      { "type": "key", "keycode": 87 }
+    ],
+    "move_down": [
+      { "type": "key", "keycode": 83 }
+    ],
+    "action_primary": [
+      { "type": "mouse_button", "button_index": 1 }
+    ],
+    "pause": [
+      { "type": "key", "keycode": 4194320 }
+    ],
+    "ui_accept": [
+      { "type": "key", "keycode": 4194309 }
+    ],
+    "ui_cancel": [
+      { "type": "key", "keycode": 4194320 }
+    ]
+  }
+}

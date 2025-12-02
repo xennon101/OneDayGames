@@ -1,0 +1,19 @@
+{
+  "company": {
+    "name": "OneDayGames",
+    "logo_path": "res://defaultTemplate/icon.svg",
+    "fallback_text": "OneDayGames",
+    "footer": "\u00a9 OneDayGames. All rights reserved."
+  },
+  "game": {
+    "title": "OneDay Template",
+    "logo_path": "res://defaultTemplate/icon.svg",
+    "fallback_text": "OneDay Template"
+  },
+  "legal": {
+    "epilepsy_warning": "This game may contain flashing lights. Player discretion advised.",
+    "mission": "OneDayGames builds games in around one man-day by leaning on AI for code, art, sound, and design.",
+    "credits_text": "Created with the OneDayGames default template.",
+    "footer": "\u00a9 OneDayGames. All rights reserved."
+  }
+}

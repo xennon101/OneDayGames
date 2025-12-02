@@ -194,6 +194,7 @@ The agent must ensure:
 - SaveManager handles saves  
 - EventBus handles communication  
 - LegalManager handles legal UI  
+- All shared services get a local copy in the game project folder which needs to be updated at build time.
 
 No generated project may violate these rules.
 
@@ -219,3 +220,12 @@ For any task, Codex must:
 - End the response with a short summary of what changed.
 
 Codex must not re-emit or restate these specifications unless explicitly asked. It must apply them silently to the requested task.
+
+## 16. Test Execution
+
+Tests must be executed and pass before any development is considered complete.
+
+Execute tests using this format as a template. Modify and repeat where appropriate:
+
+$env:GODOT_USER_DATA_DIR='C:\Dropbox\work\OneDayGames\GodotProjects\tmp_user'; `
+& 'C:\tools\Godot\godot.exe' --headless --log-file 'C:\Dropbox\work\OneDayGames\GodotProjects\tmp_user\[LOG NAME].log' --path [PATH]. -s [TEST FILE]
