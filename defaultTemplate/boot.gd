@@ -5,6 +5,7 @@ extends Control
 @onready var company_logo_tex: TextureRect = $Center/CompanyLogo
 @onready var company_logo_fallback: Label = $Center/CompanyLogoFallback
 @onready var warning_label: Label = $Center/Warning
+@onready var legal_text_label: Label = $Center/LegalText
 @onready var footer_label: Label = $Footer/LegalFooter
 
 
@@ -43,6 +44,8 @@ func _show_warning_if_needed() -> void:
 		return
 	if warning_label:
 		warning_label.text = lm.get_epilepsy_warning_text()
+	if legal_text_label and lm:
+		legal_text_label.text = lm.get_credits_text()
 
 
 func _apply_logo() -> void:

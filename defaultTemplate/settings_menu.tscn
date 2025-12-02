@@ -149,6 +149,10 @@ autowrap_mode = 2
 wait_time = 15.0
 one_shot = true
 
+[node name="CountdownTick" type="Timer" parent="Center/Tabs/Display/DisplayVBox/ApplyConfirm"]
+wait_time = 1.0
+one_shot = false
+
 [node name="Keybinds" type="Control" parent="Center/Tabs"]
 layout_mode = 3
 
@@ -191,6 +195,12 @@ custom_constants/separation = 8
 [node name="MasterLabel" type="Label" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
 layout_mode = 2
 text = "Master Volume"
+horizontal_alignment = 0
+
+[node name="MasterMin" type="Label" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
 
 [node name="MasterSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
 layout_mode = 2
@@ -198,6 +208,13 @@ min_value = 0.0
 max_value = 100.0
 step = 1.0
 value = 100.0
+size_flags_horizontal = 3
+
+[node name="MasterMax" type="Label" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
+layout_mode = 2
+text = "100"
+horizontal_alignment = 1
+size_flags_horizontal = 1
 
 [node name="MusicHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
 layout_mode = 2
@@ -207,6 +224,12 @@ custom_constants/separation = 8
 [node name="MusicLabel" type="Label" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
 layout_mode = 2
 text = "Music Volume"
+horizontal_alignment = 0
+
+[node name="MusicMin" type="Label" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
 
 [node name="MusicSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
 layout_mode = 2
@@ -214,6 +237,13 @@ min_value = 0.0
 max_value = 100.0
 step = 1.0
 value = 80.0
+size_flags_horizontal = 3
+
+[node name="MusicMax" type="Label" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
+layout_mode = 2
+text = "100"
+horizontal_alignment = 1
+size_flags_horizontal = 1
 
 [node name="SfxHBox" type="HBoxContainer" parent="Center/Tabs/Audio/AudioVBox"]
 layout_mode = 2
@@ -223,6 +253,12 @@ custom_constants/separation = 8
 [node name="SfxLabel" type="Label" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
 layout_mode = 2
 text = "SFX Volume"
+horizontal_alignment = 0
+
+[node name="SfxMin" type="Label" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
 
 [node name="SfxSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
 layout_mode = 2
@@ -230,6 +266,13 @@ min_value = 0.0
 max_value = 100.0
 step = 1.0
 value = 80.0
+size_flags_horizontal = 3
+
+[node name="SfxMax" type="Label" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
+layout_mode = 2
+text = "100"
+horizontal_alignment = 1
+size_flags_horizontal = 1
 
 [node name="BackButton" type="Button" parent="Center"]
 layout_mode = 2

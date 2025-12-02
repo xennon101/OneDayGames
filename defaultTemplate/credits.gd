@@ -1,4 +1,4 @@
-extends Control
+﻿extends Control
 
 @onready var company_logo_tex: TextureRect = $Center/Logos/CompanyLogo
 @onready var company_logo_fallback: Label = $Center/Logos/CompanyLogoFallback
@@ -24,7 +24,7 @@ func _populate() -> void:
 		var cfg = _get_autoload("ConfigManager")
 		if cfg:
 			var assets: Dictionary = cfg.get_template_assets_config()
-			$Center/Company.text = assets.get("company", {}).get("name", "OneDayGames")
+			$Center/Company.text = assets.get("game", {}).get("title", "OneDay Template")
 			$Center/Website.text = "https://example.com"
 			$Center/CreditsText.text = assets.get("legal", {}).get("credits_text", "Created with OneDayGames.")
 			$Center/Copy.text = assets.get("legal", {}).get("footer", "(c) OneDayGames. All rights reserved.")
@@ -58,7 +58,7 @@ func _apply_logos() -> void:
 
 
 func _apply_footer() -> void:
-	var footer_text := "© OneDayGames. All rights reserved."
+	var footer_text := "(c) OneDayGames. All rights reserved."
 	var cfg = _get_autoload("ConfigManager")
 	if cfg:
 		var assets: Dictionary = cfg.get_template_assets_config()

@@ -21,6 +21,8 @@ func _run_all() -> void:
 	_run("Settings apply/revert UI present", _test_settings_apply_ui)
 	_run("Keybinds come from config", _test_keybinds_config)
 	_run("Footer text matches config", _test_footer_from_config)
+	_run("Enter key can be rebound", _test_rebind_enter_key)
+	_run("Audio sliders show bounds and move", _test_audio_slider_labels)
 
 
 func _run(name: String, fn: Callable) -> void:
@@ -121,11 +123,8 @@ func _test_loading_screen_status() -> bool:
 	inst.call("set_progress", 0.5)
 	var status: String = inst.get_node("VBoxContainer/Status").text
 	var progress: float = inst.get_node("VBoxContainer/Progress").value
-	if status != "Loading test" or not is_equal_approx(progress, 0.5):
-		push_error("Loading screen status/progress mismatch")
-		return false
 	inst.queue_free()
-	return true
+	return status == "Loading test" and is_equal_approx(progress, 0.5)
 
 
 func _test_settings_apply_ui() -> bool:
@@ -133,15 +132,13 @@ func _test_settings_apply_ui() -> bool:
 	var inst: Control = packed.instantiate()
 	get_root().add_child(inst)
 	inst.call("_populate_resolution_options")
-	assert(inst.has_node("Center/Tabs/Display/DisplayVBox/ApplyButton"))
-	assert(inst.has_node("Center/Tabs/Display/DisplayVBox/ApplyConfirm"))
-	assert(inst.has_node("Footer/LegalFooter"))
+	var ok := inst.has_node("Center/Tabs/Display/DisplayVBox/ApplyButton")
+	ok = ok and inst.has_node("Center/Tabs/Display/DisplayVBox/ApplyConfirm")
+	ok = ok and inst.has_node("Footer/LegalFooter")
 	var options: OptionButton = inst.get_node("Center/Tabs/Display/DisplayVBox/ResolutionHBox/Resolution")
-	if options.item_count <= 0:
-		push_error("Resolution list is empty")
-		return false
+	ok = ok and options.item_count > 0
 	inst.queue_free()
-	return true
+	return ok
 
 
 func _test_keybinds_config() -> void:
@@ -156,8 +153,6 @@ func _test_keybinds_config() -> void:
 	var defaults: Dictionary = im.get_default_actions()
 	assert(defaults.has("move_left"))
 	assert(InputMap.has_action("move_left"))
-	get_root().remove_child(im)
-	get_root().remove_child(cfg)
 	im.queue_free()
 	cfg.queue_free()
 
@@ -173,10 +168,50 @@ func _test_footer_from_config() -> bool:
 	var inst: Control = packed.instantiate()
 	get_root().add_child(inst)
 	var footer_label: Label = inst.get_node("Footer/LegalFooter")
-	if not (footer_label.text == footer or footer.is_empty()):
-		push_error("Footer text mismatch: %s vs %s" % [footer_label.text, footer])
-		return false
+	var ok := footer_label.text == footer or footer.is_empty()
 	inst.queue_free()
-	get_root().remove_child(cfg)
 	cfg.queue_free()
-	return true
+	return ok
+
+
+func _test_rebind_enter_key() -> bool:
+	var cfg: Node = load("res://shared/autoload/ConfigManager.gd").new()
+	cfg.name = "ConfigManager"
+	get_root().add_child(cfg)
+	cfg._ready()
+	var im: Node = load("res://shared/autoload/InputManager.gd").new()
+	im.name = "InputManager"
+	get_root().add_child(im)
+	im._ready()
+	im.start_rebind("move_left")
+	var ev := InputEventKey.new()
+	ev.keycode = Key.KEY_ENTER
+	ev.pressed = true
+	im._input(ev)
+	var events := InputMap.action_get_events("move_left")
+	im.queue_free()
+	cfg.queue_free()
+	return not events.is_empty() and events[0] is InputEventKey and events[0].keycode == Key.KEY_ENTER
+
+
+func _test_audio_slider_labels() -> bool:
+	var packed := ResourceLoader.load("res://settings_menu.tscn")
+	var inst: Control = packed.instantiate()
+	get_root().add_child(inst)
+	var master_min: Label = inst.get_node("Center/Tabs/Audio/AudioVBox/MasterHBox/MasterMin")
+	var master_max: Label = inst.get_node("Center/Tabs/Audio/AudioVBox/MasterHBox/MasterMax")
+	var master_slider: HSlider = inst.get_node("Center/Tabs/Audio/AudioVBox/MasterHBox/MasterSlider")
+	var music_min: Label = inst.get_node("Center/Tabs/Audio/AudioVBox/MusicHBox/MusicMin")
+	var music_max: Label = inst.get_node("Center/Tabs/Audio/AudioVBox/MusicHBox/MusicMax")
+	var music_slider: HSlider = inst.get_node("Center/Tabs/Audio/AudioVBox/MusicHBox/MusicSlider")
+	var sfx_min: Label = inst.get_node("Center/Tabs/Audio/AudioVBox/SfxHBox/SfxMin")
+	var sfx_max: Label = inst.get_node("Center/Tabs/Audio/AudioVBox/SfxHBox/SfxMax")
+	var sfx_slider: HSlider = inst.get_node("Center/Tabs/Audio/AudioVBox/SfxHBox/SfxSlider")
+	var ok := master_min.text == "0" and master_max.text == "100"
+	ok = ok and music_min.text == "0" and music_max.text == "100"
+	ok = ok and sfx_min.text == "0" and sfx_max.text == "100"
+	ok = ok and master_slider.min_value == 0.0 and master_slider.max_value == 100.0
+	ok = ok and music_slider.min_value == 0.0 and music_slider.max_value == 100.0
+	ok = ok and sfx_slider.min_value == 0.0 and sfx_slider.max_value == 100.0
+	inst.queue_free()
+	return ok

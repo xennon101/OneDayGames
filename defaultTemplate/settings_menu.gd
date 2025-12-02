@@ -8,6 +8,7 @@ extends Control
 @onready var confirm_popup: ConfirmationDialog = $Center/Tabs/Display/DisplayVBox/ApplyConfirm
 @onready var confirm_label: Label = $Center/Tabs/Display/DisplayVBox/ApplyConfirm/Label
 @onready var confirm_timer: Timer = $Center/Tabs/Display/DisplayVBox/ApplyConfirm/RevertTimer
+@onready var confirm_tick: Timer = $Center/Tabs/Display/DisplayVBox/ApplyConfirm/CountdownTick
 @onready var keybinds_container: VBoxContainer = $Center/Tabs/Keybinds/KeybindsVBox
 @onready var master_slider: HSlider = $Center/Tabs/Audio/AudioVBox/MasterHBox/MasterSlider
 @onready var music_slider: HSlider = $Center/Tabs/Audio/AudioVBox/MusicHBox/MusicSlider
@@ -23,6 +24,8 @@ var _input_manager: Object = null
 var _staged_display: Dictionary = {}
 var _previous_display: Dictionary = {}
 var _apply_timeout_seconds: float = 15.0
+var _countdown_remaining: float = 0.0
+var _listening_action: String = ""
 
 
 func _ready() -> void:
@@ -45,6 +48,7 @@ func _ready() -> void:
 	confirm_popup.confirmed.connect(_on_keep_pressed)
 	confirm_popup.canceled.connect(_on_revert_pressed)
 	confirm_timer.timeout.connect(_on_revert_timeout)
+	confirm_tick.timeout.connect(_on_countdown_tick)
 	master_slider.value_changed.connect(_on_master_changed)
 	music_slider.value_changed.connect(_on_music_changed)
 	sfx_slider.value_changed.connect(_on_sfx_changed)
@@ -115,6 +119,7 @@ func _build_keybinds() -> void:
 		button.text = _event_to_text(InputMap.action_get_events(action_name))
 		button.pressed.connect(func():
 			button.text = "Press key..."
+			_set_listening_button(action_name, button, true)
 			_input_manager.start_rebind(action_name)
 		)
 		row.add_child(label)
@@ -180,10 +185,12 @@ func _on_back_pressed() -> void:
 
 
 func _on_rebind_finished(action_name: String, _event: InputEvent) -> void:
+	_set_listening_button(action_name, _action_buttons.get(action_name), false)
 	_update_binding_button(action_name)
 
 
 func _on_rebind_cancelled(action_name: String) -> void:
+	_set_listening_button(action_name, _action_buttons.get(action_name), false)
 	_update_binding_button(action_name)
 
 
@@ -195,6 +202,8 @@ func _update_binding_button(action_name: String) -> void:
 
 func _on_keep_pressed() -> void:
 	confirm_timer.stop()
+	confirm_tick.stop()
+	_countdown_remaining = 0.0
 	var cfg = _get_autoload("ConfigManager")
 	if cfg:
 		for key in _staged_display.keys():
@@ -259,10 +268,13 @@ func _get_default_resolution() -> String:
 
 
 func _start_revert_countdown() -> void:
-	confirm_label.text = "Keep these display settings?\nReverting in %s..." % int(_apply_timeout_seconds)
+	_countdown_remaining = _apply_timeout_seconds
+	_update_confirm_label()
 	confirm_popup.popup_centered()
 	confirm_timer.wait_time = _apply_timeout_seconds
 	confirm_timer.start()
+	confirm_tick.wait_time = 1.0
+	confirm_tick.start()
 
 
 func _revert_display_settings() -> void:
@@ -272,6 +284,8 @@ func _revert_display_settings() -> void:
 		for key in _previous_display.keys():
 			cfg.set_setting("display", key, _previous_display[key])
 	_load_display_settings()
+	confirm_tick.stop()
+	_countdown_remaining = 0.0
 
 
 func _apply_logos() -> void:
@@ -327,9 +341,34 @@ func _load_texture(path: String) -> Texture2D:
 
 
 func _get_autoload(name: String) -> Object:
-	var root := get_tree().get_root()
-	if root.has_node(name):
-		return root.get_node(name)
+	var tree := get_tree()
+	if tree:
+		var root := tree.get_root()
+		if root and root.has_node(name):
+			return root.get_node(name)
 	if Engine.has_singleton(name):
 		return Engine.get_singleton(name)
 	return null
+
+
+func _update_confirm_label() -> void:
+	var remaining := int(round(_countdown_remaining))
+	if remaining < 0:
+		remaining = 0
+	confirm_label.text = "Keep these display settings?\nReverting in %s..." % remaining
+
+
+func _on_countdown_tick() -> void:
+	_countdown_remaining -= 1.0
+	_update_confirm_label()
+	if _countdown_remaining <= 0.0:
+		confirm_tick.stop()
+
+
+func _set_listening_button(action_name: String, button: Button, listening: bool) -> void:
+	if button == null:
+		return
+	_listening_action = action_name if listening else ""
+	button.disabled = listening
+	if listening:
+		button.release_focus()

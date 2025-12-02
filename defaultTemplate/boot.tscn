@@ -50,6 +50,12 @@ layout_mode = 2
 text = ""
 horizontal_alignment = 1
 
+[node name="LegalText" type="Label" parent="Center"]
+layout_mode = 2
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [node name="Footer" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 12

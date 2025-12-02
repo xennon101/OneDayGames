@@ -16,8 +16,8 @@ WARNING: ConfigManager: failed to save config (user:// unavailable), settings no
        [0] save_config (res://shared/autoload/ConfigManager.gd:64)
        [1] load_config (res://shared/autoload/ConfigManager.gd:52)
        [2] _ready (res://shared/autoload/ConfigManager.gd:36)
-       [3] _test_keybinds_config (res://tests/template_smoke.gd:151)
-       [4] _run (res://tests/template_smoke.gd:30)
+       [3] _test_keybinds_config (res://tests/template_smoke.gd:148)
+       [4] _run (res://tests/template_smoke.gd:32)
        [5] _run_all (res://tests/template_smoke.gd:22)
        [6] _initialize (res://tests/template_smoke.gd:8)
 PASS: Keybinds come from config
@@ -27,12 +27,24 @@ WARNING: ConfigManager: failed to save config (user:// unavailable), settings no
        [0] save_config (res://shared/autoload/ConfigManager.gd:64)
        [1] load_config (res://shared/autoload/ConfigManager.gd:52)
        [2] _ready (res://shared/autoload/ConfigManager.gd:36)
-       [3] _test_footer_from_config (res://tests/template_smoke.gd:169)
-       [4] _run (res://tests/template_smoke.gd:30)
+       [3] _test_footer_from_config (res://tests/template_smoke.gd:164)
+       [4] _run (res://tests/template_smoke.gd:32)
        [5] _run_all (res://tests/template_smoke.gd:23)
        [6] _initialize (res://tests/template_smoke.gd:8)
 PASS: Footer text matches config
-Template smoke tests run: 10, failures: 0
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:52)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:36)
+       [3] _test_rebind_enter_key (res://tests/template_smoke.gd:181)
+       [4] _run (res://tests/template_smoke.gd:32)
+       [5] _run_all (res://tests/template_smoke.gd:24)
+       [6] _initialize (res://tests/template_smoke.gd:8)
+PASS: Enter key can be rebound
+PASS: Audio sliders show bounds and move
+Template smoke tests run: 12, failures: 0
 [SceneConfig] autoload setting: {  }
 [SceneConfig] project root: C:/Dropbox/work/OneDayGames/GodotProjects/defaultTemplate
 [SceneConfig] base path: res:// (local_boot: true, template_boot: false)
@@ -47,6 +59,24 @@ WARNING: ConfigManager: failed to save config (user:// unavailable), settings no
 [SceneManager] autoload SceneConfig path: res://shared/autoload/SceneConfig.gd
 [SceneManager] scene_config set: true
 [Boot] ready, applying theme and warning
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:52)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:36)
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:52)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:36)
+WARNING: ConfigManager: failed to save config (user:// unavailable), settings not persisted.
+   at: push_warning (core/variant/variant_utility.cpp:1034)
+   GDScript backtrace (most recent call first):
+       [0] save_config (res://shared/autoload/ConfigManager.gd:64)
+       [1] load_config (res://shared/autoload/ConfigManager.gd:52)
+       [2] _ready (res://shared/autoload/ConfigManager.gd:36)
 [SceneManager] ready. SceneConfig exists: true at C:/Dropbox/work/OneDayGames/GodotProjects/defaultTemplate/
 WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
    at: cleanup (core/object/object.cpp:2514)
