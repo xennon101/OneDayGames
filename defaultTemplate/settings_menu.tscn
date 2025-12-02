@@ -196,11 +196,13 @@ custom_constants/separation = 8
 layout_mode = 2
 text = "Master Volume"
 horizontal_alignment = 0
+size_flags_horizontal = 1
 
 [node name="MasterMin" type="Label" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
 layout_mode = 2
 text = "0"
 horizontal_alignment = 1
+size_flags_horizontal = 1
 
 [node name="MasterSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MasterHBox"]
 layout_mode = 2
@@ -225,11 +227,13 @@ custom_constants/separation = 8
 layout_mode = 2
 text = "Music Volume"
 horizontal_alignment = 0
+size_flags_horizontal = 1
 
 [node name="MusicMin" type="Label" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
 layout_mode = 2
 text = "0"
 horizontal_alignment = 1
+size_flags_horizontal = 1
 
 [node name="MusicSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/MusicHBox"]
 layout_mode = 2
@@ -254,11 +258,13 @@ custom_constants/separation = 8
 layout_mode = 2
 text = "SFX Volume"
 horizontal_alignment = 0
+size_flags_horizontal = 1
 
 [node name="SfxMin" type="Label" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
 layout_mode = 2
 text = "0"
 horizontal_alignment = 1
+size_flags_horizontal = 1
 
 [node name="SfxSlider" type="HSlider" parent="Center/Tabs/Audio/AudioVBox/SfxHBox"]
 layout_mode = 2

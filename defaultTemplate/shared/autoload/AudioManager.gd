@@ -100,8 +100,8 @@ func update_volumes(audio_config := {}) -> void:
 	var music: float = cfg.get("music_volume", 0.8)
 	var sfx: float = cfg.get("sfx_volume", 0.8)
 	_set_bus_volume(MASTER_BUS, master)
-	_set_bus_volume(MUSIC_BUS, music)
-	_set_bus_volume(SFX_BUS, sfx)
+	_set_bus_volume(MUSIC_BUS, master * music)
+	_set_bus_volume(SFX_BUS, master * sfx)
 
 
 func _set_bus_volume(bus_name: String, linear: float) -> void:

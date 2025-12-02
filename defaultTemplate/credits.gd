@@ -30,7 +30,7 @@ func _populate() -> void:
 			$Center/Copy.text = assets.get("legal", {}).get("footer", "(c) OneDayGames. All rights reserved.")
 			mission_label.text = assets.get("legal", {}).get("mission", mission_label.text)
 		return
-	$Center/Company.text = lm.get_company_name()
+	$Center/Company.text = lm.get_credits_text()
 	$Center/Website.text = lm.get_website_url()
 	$Center/CreditsText.text = lm.get_credits_text()
 	$Center/Copy.text = lm.get_copyright()

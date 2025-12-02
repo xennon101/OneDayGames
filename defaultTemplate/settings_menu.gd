@@ -163,18 +163,21 @@ func _on_master_changed(value: float) -> void:
 	var cfg = _get_autoload("ConfigManager")
 	if cfg:
 		cfg.set_setting("audio", "master_volume", value / 100.0)
+	_show_slider_value(master_slider, value)
 
 
 func _on_music_changed(value: float) -> void:
 	var cfg = _get_autoload("ConfigManager")
 	if cfg:
 		cfg.set_setting("audio", "music_volume", value / 100.0)
+	_show_slider_value(music_slider, value)
 
 
 func _on_sfx_changed(value: float) -> void:
 	var cfg = _get_autoload("ConfigManager")
 	if cfg:
 		cfg.set_setting("audio", "sfx_volume", value / 100.0)
+	_show_slider_value(sfx_slider, value)
 
 
 func _on_back_pressed() -> void:
@@ -315,6 +318,12 @@ func _play_ui_click() -> void:
 	var audio = _get_autoload("AudioManager")
 	if audio and audio.has_method("play_sfx"):
 		audio.play_sfx("ui_click")
+
+
+func _show_slider_value(slider: HSlider, value: float) -> void:
+	if slider == null:
+		return
+	slider.hint_tooltip = str(int(round(value)))
 
 
 func _set_logo(tex_node: TextureRect, label_node: Label, texture: Texture2D, fallback_text: String) -> void:
