@@ -1,0 +1,13 @@
+{
+  "version": "2.0",
+  "routeKey": "GET /leaderboard/top",
+  "rawPath": "/leaderboard/top",
+  "headers": {
+    "X-Signature": "REPLACE_SIGNATURE"
+  },
+  "queryStringParameters": {
+    "game_id": "ExampleGame",
+    "limit": "5"
+  },
+  "isBase64Encoded": false
+}

@@ -1,0 +1,10 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /leaderboard/submit",
+  "rawPath": "/leaderboard/submit",
+  "headers": {
+    "X-Signature": "REPLACE_SIGNATURE"
+  },
+  "body": "{\"game_id\":\"ExampleGame\",\"player_id\":\"player-uuid\",\"player_name\":\"PlayerOne\",\"score\":12345,\"nonce\":\"nonce-uuid\",\"timestamp\":1730000000}",
+  "isBase64Encoded": false
+}

@@ -61,3 +61,9 @@ sam deploy --stack-name leaderboard-service --guided \
 ```bash
 sam local invoke SubmitScoreFunction --event events/submit.json
 ```
+
+## samconfig presets
+- `samconfig.toml` includes dev/stage/prod parameter sets. Example: `sam deploy --config-env stage`.
+
+## Local event samples
+- `events/submit.json`, `events/top.json`, `events/player.json`, `events/top_with_player.json` include placeholder signatures; replace `REPLACE_SIGNATURE` with `hex(hmac_sha256(secret, canonical_payload))` before invoking.

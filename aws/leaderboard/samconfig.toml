@@ -1,0 +1,29 @@
+version = 0.1
+
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "leaderboard-service-dev"
+resolve_s3 = true
+s3_prefix = "leaderboard"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides = "LeaderboardTableName=LeaderboardScores-dev MaxScore=100000000 TimestampSkewSecs=300 HmacSecretParam=/leaderboard/dev/hmac EnableTTL=false ReplayTtlSecs=0"
+confirm_changeset = false
+
+[stage.deploy.parameters]
+stack_name = "leaderboard-service-stage"
+resolve_s3 = true
+s3_prefix = "leaderboard"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides = "LeaderboardTableName=LeaderboardScores-stage MaxScore=100000000 TimestampSkewSecs=300 HmacSecretParam=/leaderboard/stage/hmac EnableTTL=false ReplayTtlSecs=0"
+confirm_changeset = false
+
+[prod.deploy.parameters]
+stack_name = "leaderboard-service-prod"
+resolve_s3 = true
+s3_prefix = "leaderboard"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+parameter_overrides = "LeaderboardTableName=LeaderboardScores MaxScore=100000000 TimestampSkewSecs=300 HmacSecretParam=/leaderboard/prod/hmac EnableTTL=false ReplayTtlSecs=0"
+confirm_changeset = false
