@@ -323,7 +323,7 @@ func _play_ui_click() -> void:
 func _show_slider_value(slider: HSlider, value: float) -> void:
 	if slider == null:
 		return
-	slider.hint_tooltip = str(int(round(value)))
+	slider.tooltip_text = str(int(round(value)))
 
 
 func _set_logo(tex_node: TextureRect, label_node: Label, texture: Texture2D, fallback_text: String) -> void:

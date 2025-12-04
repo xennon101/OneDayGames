@@ -15,8 +15,13 @@ This document defines all global systems, singletons, behaviours, structures, an
 - SaveManager.gd  
 - EventBus.gd  
 - LegalManager.gd  
+- PlayerIdentityManager.gd  
+- LeaderboardManager.gd  
+- MatchmakingManager.gd  
+- NetSessionManager.gd  
 
 ---
+
 
 ## 2. Scene Management – SceneManager.gd
 
@@ -267,3 +272,217 @@ const PATHS = {
 Games must follow this sequence:
 
 - Boot → Main Menu → Settings / Credits / Gameplay → Exit
+
+
+---
+
+## 11. Player Identity – PlayerIdentityManager.gd
+
+### Purpose
+
+- Provide a global, persistent, anonymous player identifier that can be used across all games.
+- Avoid requiring user authentication while still giving each player a stable identity for services such as leaderboards and matchmaking.
+
+### Requirements
+
+- Must generate a unique player identifier on first use.
+- The identifier must:
+  - Be a UUID v4 or equivalent high-entropy random string.
+  - Be stable across runs for the same user on the same device.
+  - Be stored in a persistent location (for example `user://` or inside ConfigManager).
+- The identifier must not be derived from personally identifiable information.
+
+### Public API
+
+- get_player_id() -> String  
+  - Returns the existing player_id, generating and persisting one if it does not exist.
+- reset_player_id() -> void  
+  - Optional. Regenerates the player_id and persists it. Must not be called accidentally.
+
+### Behaviour
+
+- On first call to get_player_id(), the manager must:
+  - Check persistent storage for an existing id.
+  - If not present, generate a UUID.
+  - Persist the UUID.
+- All subsequent calls must return the same ID until reset_player_id() is explicitly used.
+- PlayerIdentityManager must be treated as read-mostly; games should not reset the ID during normal operation.
+- PlayerIdentityManager must not perform any network calls by itself.
+
+
+---
+
+## 12. Leaderboard Client – LeaderboardManager.gd
+
+### Purpose
+
+- Provide a shared client-side API for submitting and retrieving leaderboard scores from an external backend service (for example an AWS-hosted leaderboard service).
+- Hide HTTP and authentication details from individual games so they only call a small, stable API.
+
+### Dependencies
+
+- PlayerIdentityManager.gd for `player_id`.
+- ConfigManager.gd for configuration of:
+  - Leaderboard service base URL.
+  - Environment (dev/stage/prod) if required.
+
+### Configuration
+
+ConfigManager must provide keys under a `leaderboard` category, for example:
+
+- `leaderboard.base_url` (String)  
+  - The HTTPS base URL for the leaderboard backend, such as `https://api.example.com`.
+- `leaderboard.enabled` (bool, default true)  
+  - If false, LeaderboardManager must behave as a no-op (submissions do nothing, fetches return empty lists or appropriate defaults).
+
+The manager may provide sensible defaults if no config is present, but all network endpoints must be configurable.
+
+### Public API
+
+- submit_score(game_id: String, score: int, player_name: String = "") -> void  
+  - Asynchronously submits a score for the current player.
+- fetch_top(game_id: String, limit: int = 10, callback: Callable) -> void  
+  - Asynchronously fetches the top scores, calling the provided callback with the results or an error.
+
+Results passed to callbacks should use a normalised structure, for example:
+
+- An Array of Dictionaries with fields:
+  - `player_name` (String)
+  - `score` (int)
+  - `rank` (int)
+
+### Network Behaviour
+
+- All requests must be performed over HTTPS.
+- The manager must use Godot's HTTP client facilities (for example HTTPRequest node).
+- Requests must include:
+  - `game_id` (string) to distinguish different games.
+  - `player_id` from PlayerIdentityManager.
+  - `player_name` if provided by the game.
+  - `score` (for submissions).
+- The manager must be resilient to network errors:
+  - If submission fails, it must not crash the game.
+  - If fetching fails, it must return an empty list or propagate an error via the callback in a controlled way.
+- The manager must not block the main thread; all operations are asynchronous.
+
+### Security Model
+
+- The manager may include an HMAC-based signature if required by the backend (for example to deter trivial tampering), but:
+  - Any secrets used for signing must not be hardcoded directly into scripts.
+  - Secrets should be provided via ConfigManager, and populated at build time or from external configuration.
+
+### Integration With Games
+
+- Games should not call HTTP directly for leaderboard operations.
+- Games must:
+  - Use PlayerIdentityManager for player identity.
+  - Use LeaderboardManager for submit and fetch operations.
+- The shared default template may include placeholder UI elements for:
+  - Showing the top N scores.
+  - Submitting the final score on game over.
+
+
+---
+
+## 13. Matchmaking Client – MatchmakingManager.gd
+
+### Purpose
+
+- Provide a shared client-side API for queueing players into matchmaking, checking match status, and exchanging signalling data required to set up peer-to-peer sessions.
+- Hide HTTP details and backend-specific mechanics behind a simple Godot-facing interface.
+
+### Dependencies
+
+- PlayerIdentityManager.gd for `player_id`.
+- ConfigManager.gd for configuration of:
+  - Matchmaking service base URL.
+  - Environment (dev/stage/prod) if required.
+
+### Configuration
+
+ConfigManager must provide keys under a `matchmaking` category, for example:
+
+- `matchmaking.base_url` (String)  
+  - The HTTPS base URL for the matchmaking backend.
+- `matchmaking.enabled` (bool, default false)  
+  - If false, matchmaking functions must behave as no-ops or return immediate failure states.
+
+### Public API
+
+- queue_for_match(game_id: String, mode: String, metrics: Dictionary = {}) -> void  
+  - Enqueues the current player into a matchmaking queue.
+- cancel_queue(game_id: String, mode: String) -> void  
+  - Cancels an outstanding matchmaking request.
+- poll_match_status(game_id: String, mode: String, callback: Callable) -> void  
+  - Polls the backend for match status and invokes the callback with results.
+- send_signal(match_id: String, payload: Dictionary) -> void  
+  - Sends signalling data (for example WebRTC offer/answer/ICE) to the backend.
+- poll_signals(match_id: String, callback: Callable) -> void  
+  - Retrieves signalling messages destined for this player and passes them to the callback.
+
+The exact structure of `metrics` and signalling payloads must follow the AWS multiplayer service spec.
+
+### Behaviour
+
+- All operations must be asynchronous and must not block the main thread.
+- Network failures must be surfaced via callbacks in a controlled, non-crashing way.
+- MatchmakingManager does not start or own the peer-to-peer session itself; it only interacts with the backend service and forwards signalling data to NetSessionManager (or equivalent).
+
+### Security Model
+
+- If the backend requires request signing (for example HMAC), MatchmakingManager must:
+  - Obtain any signing keys or tokens from ConfigManager.
+  - Never hardcode secrets directly in scripts.
+
+
+
+---
+
+## 14. P2P Session Management – NetSessionManager.gd
+
+### Purpose
+
+- Manage the lifecycle of peer-to-peer multiplayer sessions in Godot.
+- Abstract the underlying transport (for example WebRTC or ENet) behind a consistent API.
+- Coordinate with MatchmakingManager for signalling data.
+
+### Transport
+
+- The preferred transport for internet-based peer-to-peer is WebRTC via Godot's WebRTC classes.
+- Local or LAN-based games may additionally support ENet via ENetMultiplayerPeer.
+
+### Public API
+
+- start_host_session(match_id: String, config: Dictionary = {}) -> void  
+  - Prepares the local player to act as the host/authority for a P2P session.
+- start_client_session(match_id: String, config: Dictionary = {}) -> void  
+  - Prepares the local player to join as a client in a P2P session.
+- handle_signalling_message(match_id: String, payload: Dictionary) -> void  
+  - Accepts signalling messages received via MatchmakingManager and routes them into the underlying WebRTC/ENet implementation.
+- is_connected() -> bool  
+  - Returns true when the P2P session is established.
+- disconnect() -> void  
+  - Gracefully tears down the session.
+
+### Behaviour
+
+- For WebRTC:
+  - As host:
+    - Create WebRTC peer.
+    - Generate offers and ICE candidates and pass them to MatchmakingManager.send_signal().
+  - As client:
+    - Receive offers and ICE candidates via MatchmakingManager.poll_signals().
+    - Generate answers and ICE candidates and send them back via MatchmakingManager.
+- For ENet (if used):
+  - Coordinate with a rendezvous or relay backend as described in the multiplayer backend spec.
+- NetSessionManager must:
+  - Integrate with Godot's high-level MultiplayerAPI (for example SceneMultiplayer).
+  - Ensure authority and peer IDs are configured correctly.
+  - Expose a clear way for game code to register RPC-based game logic.
+
+### Integration With Games
+
+- Games must not directly instantiate WebRTC or ENet peers for standard P2P flows; they must use NetSessionManager instead.
+- Game scenes can query NetSessionManager for connection status and peer information.
+- Game-specific networked logic should rely on Godot's multiplayer RPC model, configured by NetSessionManager.
+
