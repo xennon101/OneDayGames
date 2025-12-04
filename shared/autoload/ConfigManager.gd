@@ -23,6 +23,13 @@ const DEFAULT_CONFIG := {
 	"input": {
 		"actions": {}
 	},
+	"leaderboard": {
+		"base_url": "",
+		"enabled": true,
+		"hmac_key": "",
+		"max_score": 100000000,
+		"timeout_secs": 8.0
+	},
 	"game": {}
 }
 

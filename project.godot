@@ -16,6 +16,8 @@ InputManager="res://shared/autoload/InputManager.gd"
 AudioManager="res://shared/autoload/AudioManager.gd"
 SaveManager="res://shared/autoload/SaveManager.gd"
 LegalManager="res://shared/autoload/LegalManager.gd"
+PlayerIdentityManager="res://shared/autoload/PlayerIdentityManager.gd"
+LeaderboardManager="res://shared/autoload/LeaderboardManager.gd"
 SceneManager="res://shared/autoload/SceneManager.gd"
 
 [input]

@@ -1,7 +1,7 @@
 # Leaderboard Backend Implementation Plan
 
 ## Goal
-Deliver the AWS leaderboard service per `leaderboard_spec.md` using SAM, Node.js 24.x Lambdas, DynamoDB storage, HMAC request validation, and AWS-native CI/CD (CodePipeline/CodeBuild) for dev/stage/prod.
+Deliver the AWS leaderboard service per `leaderboard_spec.md` using SAM, Node.js 24.x Lambdas, DynamoDB storage, HMAC request validation, and AWS-native CI/CD (CodePipeline/CodeBuild) for dev/stage/prod. Ensure full deployment instructions are provided in a text file for how to provision the pipeline and do any wiring or configuration.
 
 ## Public API (final contract)
 - Security: HTTPS; JSON; header `X-Signature = hex(hmac_sha256(secret, canonical_payload))`. Canonical payload: stable-key-order JSON (POST) or sorted query string (GET).
@@ -76,4 +76,4 @@ Deliver the AWS leaderboard service per `leaderboard_spec.md` using SAM, Node.js
 - Rank accuracy: plan to use exact count query; if cost/performance issues arise, may introduce approximate rank + precomputed aggregates (would be a versioned change).
 - Replay cache: default enablement TBD; design supports optional toggle.
 - Per-player summary item vs GSI: will pick GSI for clarity unless constraints require summary items (document decision in code comments/README).
-- Pipeline source connection: assumes repository access via CodeStar Connection ARN (GitHub) or CodeCommit; confirm at implementation time and parameterize if needed.
+- Pipeline source connection: assumes repository access via CodeStar Connection ARN (GitHub) or CodeCommit; confirm at implementation time and parameterize if needed. Trigger via webhook.

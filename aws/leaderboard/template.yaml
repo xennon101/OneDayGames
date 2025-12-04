@@ -1,0 +1,180 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: OneDayGames Leaderboard Service
+
+Parameters:
+  LeaderboardTableName:
+    Type: String
+    Default: LeaderboardScores
+  MaxScore:
+    Type: Number
+    Default: 100000000
+  TimestampSkewSecs:
+    Type: Number
+    Default: 300
+  HmacSecretParam:
+    Type: String
+    Description: SSM parameter name containing the HMAC secret
+  EnableTTL:
+    Type: String
+    AllowedValues: ['true', 'false']
+    Default: 'false'
+  ReplayTtlSecs:
+    Type: Number
+    Default: 0
+
+Globals:
+  Function:
+    Runtime: nodejs24.x
+    Timeout: 10
+    MemorySize: 256
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref LeaderboardTableName
+        MAX_SCORE: !Ref MaxScore
+        TIMESTAMP_SKEW_SECS: !Ref TimestampSkewSecs
+        HMAC_SECRET_PARAM: !Ref HmacSecretParam
+        ENABLE_TTL: !Ref EnableTTL
+        REPLAY_TTL_SECS: !Ref ReplayTtlSecs
+
+Conditions:
+  EnableTTLCondition: !Equals [!Ref EnableTTL, 'true']
+
+Resources:
+  LeaderboardTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref LeaderboardTableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: game_id
+          AttributeType: S
+        - AttributeName: score_sort
+          AttributeType: N
+        - AttributeName: player_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: game_id
+          KeyType: HASH
+        - AttributeName: score_sort
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI_Player
+          KeySchema:
+            - AttributeName: player_id
+              KeyType: HASH
+            - AttributeName: game_id
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: !If [EnableTTLCondition, true, false]
+
+  SubmitScoreFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: submitScore.handler
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /leaderboard/submit
+            Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref LeaderboardTableName
+        - Statement:
+            Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource: '*'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - submitScore.ts
+
+  GetTopScoresFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: getTopScores.handler
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /leaderboard/top
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref LeaderboardTableName
+        - Statement:
+            Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource: '*'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - getTopScores.ts
+
+  GetPlayerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: getPlayer.handler
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /leaderboard/player
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref LeaderboardTableName
+        - Statement:
+            Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource: '*'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - getPlayer.ts
+
+  GetTopWithPlayerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: getTopWithPlayer.handler
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /leaderboard/top-with-player
+            Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref LeaderboardTableName
+        - Statement:
+            Effect: Allow
+            Action:
+              - ssm:GetParameter
+            Resource: '*'
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - getTopWithPlayer.ts
+
+Outputs:
+  ApiUrl:
+    Description: HTTP API endpoint
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com'
+  LeaderboardTableOut:
+    Description: DynamoDB table name
+    Value: !Ref LeaderboardTableName
